@@ -192,7 +192,7 @@ Toda rota nova deve ser documentada no OpenAPI.
 
 ## Convenções de código
 
-- Código, nomes de arquivos, variáveis e commits em **inglês**. Textos exibidos ao usuário em **português**.
+- Código, nomes de arquivos e variáveis em **inglês**. Commits, PRs e textos exibidos ao usuário em **português**.
 - Arquivos em `kebab-case.ts`; classes em `PascalCase`; funções e variáveis em `camelCase`; constantes de domínio em `UPPER_SNAKE_CASE`.
 - Sem `any`. Se for inevitável, comente o porquê.
 - Funções pequenas, com nomes que dizem o que fazem. Prefira early return a `if` aninhado.
@@ -206,8 +206,8 @@ Toda rota nova deve ser documentada no OpenAPI.
 ## Git
 
 - Branch principal: `main`. Trabalhar em branches `feat/...`, `fix/...`, `chore/...`, `test/...`, `docs/...`.
-- **Conventional Commits**: `feat(appointments): prevent overlapping bookings`
-- Commits pequenos e focados; um commit não mistura refatoração com feature.
+- **Conventional Commits** com tipo e escopo em inglês e descrição em português: `feat(appointments): impede agendamentos sobrepostos`
+- Um commit por item do roadmap (ou por correção), sem misturar refatoração com feature.
 - Não faça commit nem push sem eu pedir.
 
 ---
