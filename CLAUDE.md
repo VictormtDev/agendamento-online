@@ -252,7 +252,7 @@ Seguir em ordem. Marcar `[x]` ao concluir cada item.
 
 **Fase 2 — Área do provider**
 
-- [ ] CRUD de serviços
+- [x] CRUD de serviços
 - [ ] Grade semanal (Availability) e TimeOff
 - [ ] Campo timezone no provider
 

@@ -7,6 +7,7 @@ const DOMAIN_ERROR_STATUS: Record<string, number> = {
   EMAIL_ALREADY_IN_USE: 409,
   INVALID_CREDENTIALS: 401,
   USER_NOT_FOUND: 404,
+  SERVICE_NOT_FOUND: 404,
 };
 // Unmapped domain errors are business rule violations, which the API contract defines as 409.
 const DEFAULT_DOMAIN_ERROR_STATUS = 409;

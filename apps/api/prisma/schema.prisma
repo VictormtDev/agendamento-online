@@ -13,10 +13,24 @@ enum Role {
 }
 
 model User {
-  id           String   @id @default(uuid(7)) @db.Uuid
+  id           String    @id @default(uuid(7)) @db.Uuid
   name         String
-  email        String   @unique
+  email        String    @unique
   passwordHash String
-  role         Role     @default(CLIENT)
-  createdAt    DateTime @default(now()) @db.Timestamptz(3)
+  role         Role      @default(CLIENT)
+  createdAt    DateTime  @default(now()) @db.Timestamptz(3)
+  services     Service[]
+}
+
+model Service {
+  id              String   @id @default(uuid(7)) @db.Uuid
+  providerId      String   @db.Uuid
+  provider        User     @relation(fields: [providerId], references: [id], onDelete: Restrict)
+  name            String
+  durationMinutes Int
+  priceCents      Int
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([providerId])
 }
