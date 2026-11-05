@@ -21,6 +21,7 @@ describe('AuthenticateUser', () => {
       email: 'bruno@example.com',
       passwordHash: 'hashed:secret123',
       role: 'PROVIDER',
+      timezone: 'America/Sao_Paulo',
     });
   });
 

@@ -13,10 +13,53 @@ enum Role {
 }
 
 model User {
-  id           String   @id @default(uuid(7)) @db.Uuid
+  id           String         @id @default(uuid(7)) @db.Uuid
   name         String
-  email        String   @unique
+  email        String         @unique
   passwordHash String
-  role         Role     @default(CLIENT)
-  createdAt    DateTime @default(now()) @db.Timestamptz(3)
+  role         Role           @default(CLIENT)
+  // Same value as DEFAULT_TIMEZONE in the domain; needed here to backfill existing rows.
+  timezone     String         @default("America/Sao_Paulo")
+  createdAt    DateTime       @default(now()) @db.Timestamptz(3)
+  services     Service[]
+  availability Availability[]
+  timeOffs     TimeOff[]
+}
+
+model Service {
+  id              String   @id @default(uuid(7)) @db.Uuid
+  providerId      String   @db.Uuid
+  provider        User     @relation(fields: [providerId], references: [id], onDelete: Restrict)
+  name            String
+  durationMinutes Int
+  priceCents      Int
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([providerId])
+}
+
+// startTime/endTime are "HH:mm" in the provider timezone, not instants: a TIME
+// column would come back from Prisma as a Date on 1970-01-01, which invites bugs.
+model Availability {
+  id         String @id @default(uuid(7)) @db.Uuid
+  providerId String @db.Uuid
+  provider   User   @relation(fields: [providerId], references: [id], onDelete: Restrict)
+  weekday    Int    @db.SmallInt
+  startTime  String @db.Char(5)
+  endTime    String @db.Char(5)
+
+  @@index([providerId, weekday])
+}
+
+model TimeOff {
+  id         String   @id @default(uuid(7)) @db.Uuid
+  providerId String   @db.Uuid
+  provider   User     @relation(fields: [providerId], references: [id], onDelete: Restrict)
+  startsAt   DateTime @db.Timestamptz(3)
+  endsAt     DateTime @db.Timestamptz(3)
+  reason     String?
+  createdAt  DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([providerId, startsAt])
 }

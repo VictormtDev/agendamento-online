@@ -5,6 +5,7 @@ export interface CreateUserData {
   email: string;
   passwordHash: string;
   role: Role;
+  timezone: string;
 }
 
 export interface UserRepository {
@@ -12,4 +13,5 @@ export interface UserRepository {
   findByEmail(email: string): Promise<User | null>;
   /** @throws EmailAlreadyInUseError when the email is taken, even under concurrent inserts. */
   create(data: CreateUserData): Promise<User>;
+  updateTimezone(id: string, timezone: string): Promise<User>;
 }

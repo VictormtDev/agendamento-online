@@ -29,6 +29,7 @@ describe('Auth API', () => {
           name: 'Ana Souza',
           email: 'ana@example.com',
           role: 'CLIENT',
+          timezone: 'America/Sao_Paulo',
           createdAt: expect.stringMatching(/Z$/),
         },
         accessToken: expect.any(String),
@@ -78,6 +79,20 @@ describe('Auth API', () => {
       const response = await register({ ...NEW_USER, role: 'ADMIN' });
 
       expect(response.status).toBe(400);
+    });
+
+    it('should store the timezone chosen at sign-up', async () => {
+      const response = await register({ ...NEW_USER, role: 'PROVIDER', timezone: 'Europe/Lisbon' });
+
+      expect(response.status).toBe(201);
+      expect(response.body.user.timezone).toBe('Europe/Lisbon');
+    });
+
+    it('should reject a timezone that is not a valid IANA name', async () => {
+      const response = await register({ ...NEW_USER, timezone: 'Mars/Olympus' });
+
+      expect(response.status).toBe(400);
+      expect(response.body.error.details.issues[0].path).toBe('timezone');
     });
   });
 

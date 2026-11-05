@@ -11,6 +11,7 @@ describe('GetUserProfile', () => {
       email: 'carla@example.com',
       passwordHash: 'hashed:secret123',
       role: 'CLIENT',
+      timezone: 'America/Sao_Paulo',
     });
 
     const profile = await new GetUserProfile(userRepository).execute({ userId: created.id });
@@ -20,6 +21,7 @@ describe('GetUserProfile', () => {
       name: 'Carla Dias',
       email: 'carla@example.com',
       role: 'CLIENT',
+      timezone: 'America/Sao_Paulo',
       createdAt: created.createdAt,
     });
   });

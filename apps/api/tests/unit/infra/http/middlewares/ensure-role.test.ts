@@ -10,8 +10,8 @@ const ok: RequestHandler = (_request, response) => {
   response.status(200).json({ ok: true });
 };
 
-// No production route requires a role yet, so the middleware is exercised on a
-// throwaway app wired the same way real routes will be: authenticate, then authorize.
+// A throwaway app isolates the middleware from any real route, so the cases below
+// (several roles, missing authentication) don't depend on how routes are wired.
 function createProtectedApp() {
   const app = express();
   const ensureAuthenticated = createEnsureAuthenticated(new FakeTokenService());
