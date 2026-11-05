@@ -12,6 +12,8 @@ export type ServiceChanges = Partial<
 export interface ServiceRepository {
   /** Returns null both when the service does not exist and when it belongs to another provider. */
   findByIdAndProvider(id: string, providerId: string): Promise<Service | null>;
+  /** Ordered by name. */
+  listActiveByProvider(providerId: string): Promise<Service[]>;
   create(data: CreateServiceData): Promise<Service>;
   update(id: string, changes: ServiceChanges): Promise<Service>;
 }

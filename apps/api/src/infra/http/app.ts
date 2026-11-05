@@ -9,9 +9,11 @@ import type { CreateService } from '../../application/use-cases/create-service.j
 import type { DeleteService } from '../../application/use-cases/delete-service.js';
 import type { DeleteTimeOff } from '../../application/use-cases/delete-time-off.js';
 import type { GetAvailableSlots } from '../../application/use-cases/get-available-slots.js';
+import type { GetProviderProfile } from '../../application/use-cases/get-provider-profile.js';
 import type { GetUserProfile } from '../../application/use-cases/get-user-profile.js';
 import type { ListClientAppointments } from '../../application/use-cases/list-client-appointments.js';
 import type { ListProviderAppointments } from '../../application/use-cases/list-provider-appointments.js';
+import type { ListProviders } from '../../application/use-cases/list-providers.js';
 import type { RegisterUser } from '../../application/use-cases/register-user.js';
 import type { ReplaceAvailability } from '../../application/use-cases/replace-availability.js';
 import type { UpdateService } from '../../application/use-cases/update-service.js';
@@ -46,6 +48,8 @@ export interface AppDependencies {
   replaceAvailability: ReplaceAvailability;
   createTimeOff: CreateTimeOff;
   deleteTimeOff: DeleteTimeOff;
+  listProviders: ListProviders;
+  getProviderProfile: GetProviderProfile;
   getAvailableSlots: GetAvailableSlots;
   createAppointment: CreateAppointment;
   cancelAppointment: CancelAppointment;
@@ -71,7 +75,7 @@ export function createApp(dependencies: AppDependencies): Express {
   app.use('/api/v1', createServiceRouter(dependencies, providerOnly));
   app.use('/api/v1', createAvailabilityRouter(dependencies.replaceAvailability, providerOnly));
   app.use('/api/v1', createTimeOffRouter(dependencies, providerOnly));
-  app.use('/api/v1', createProviderRouter(dependencies.getAvailableSlots));
+  app.use('/api/v1', createProviderRouter(dependencies));
   app.use('/api/v1', createAppointmentRouter(dependencies, ensureAuthenticated, providerOnly));
 
   app.use(notFound);

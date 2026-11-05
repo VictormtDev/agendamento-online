@@ -6,9 +6,11 @@ import { CreateService } from '../application/use-cases/create-service.js';
 import { DeleteService } from '../application/use-cases/delete-service.js';
 import { DeleteTimeOff } from '../application/use-cases/delete-time-off.js';
 import { GetAvailableSlots } from '../application/use-cases/get-available-slots.js';
+import { GetProviderProfile } from '../application/use-cases/get-provider-profile.js';
 import { GetUserProfile } from '../application/use-cases/get-user-profile.js';
 import { ListClientAppointments } from '../application/use-cases/list-client-appointments.js';
 import { ListProviderAppointments } from '../application/use-cases/list-provider-appointments.js';
+import { ListProviders } from '../application/use-cases/list-providers.js';
 import { RegisterUser } from '../application/use-cases/register-user.js';
 import { ReplaceAvailability } from '../application/use-cases/replace-availability.js';
 import { UpdateService } from '../application/use-cases/update-service.js';
@@ -58,6 +60,8 @@ export function createAppDependencies(prisma: PrismaClient, env: Env): AppDepend
     replaceAvailability: new ReplaceAvailability(availabilityRepository),
     createTimeOff: new CreateTimeOff(timeOffRepository, clock),
     deleteTimeOff: new DeleteTimeOff(timeOffRepository),
+    listProviders: new ListProviders(userRepository),
+    getProviderProfile: new GetProviderProfile(userRepository, serviceRepository),
     getAvailableSlots: new GetAvailableSlots(agendaRepositories, clock),
     createAppointment: new CreateAppointment(agendaRepositories, clock),
     cancelAppointment: new CancelAppointment(agendaRepositories.appointmentRepository, clock),

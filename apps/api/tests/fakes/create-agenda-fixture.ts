@@ -14,8 +14,8 @@ export const FIXTURE_DATE = '2026-11-05';
  * (12:00-14:00 UTC). "Now" is the day before, 09:00 local.
  */
 export async function createAgendaFixture() {
-  const userRepository = new InMemoryUserRepository();
   const serviceRepository = new InMemoryServiceRepository();
+  const userRepository = new InMemoryUserRepository(serviceRepository);
   const repositories = {
     userRepository,
     serviceRepository,
