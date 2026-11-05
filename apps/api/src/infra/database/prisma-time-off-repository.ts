@@ -3,6 +3,7 @@ import type {
   TimeOffRepository,
 } from '../../application/ports/time-off-repository.js';
 import type { TimeOff } from '../../domain/entities/time-off.js';
+import type { TimeInterval } from '../../domain/services/calculate-available-slots.js';
 import type { PrismaClient } from './generated/prisma/client.js';
 
 export class PrismaTimeOffRepository implements TimeOffRepository {
@@ -10,6 +11,12 @@ export class PrismaTimeOffRepository implements TimeOffRepository {
 
   findByIdAndProvider(id: string, providerId: string): Promise<TimeOff | null> {
     return this.prisma.timeOff.findFirst({ where: { id, providerId } });
+  }
+
+  findOverlapping(providerId: string, interval: TimeInterval): Promise<TimeOff[]> {
+    return this.prisma.timeOff.findMany({
+      where: { providerId, startsAt: { lt: interval.end }, endsAt: { gt: interval.start } },
+    });
   }
 
   create(data: CreateTimeOffData): Promise<TimeOff> {

@@ -1,15 +1,21 @@
 import { AuthenticateUser } from '../application/use-cases/authenticate-user.js';
+import { CancelAppointment } from '../application/use-cases/cancel-appointment.js';
+import { CreateAppointment } from '../application/use-cases/create-appointment.js';
 import { CreateTimeOff } from '../application/use-cases/create-time-off.js';
 import { CreateService } from '../application/use-cases/create-service.js';
 import { DeleteService } from '../application/use-cases/delete-service.js';
 import { DeleteTimeOff } from '../application/use-cases/delete-time-off.js';
+import { GetAvailableSlots } from '../application/use-cases/get-available-slots.js';
 import { GetUserProfile } from '../application/use-cases/get-user-profile.js';
+import { ListClientAppointments } from '../application/use-cases/list-client-appointments.js';
+import { ListProviderAppointments } from '../application/use-cases/list-provider-appointments.js';
 import { RegisterUser } from '../application/use-cases/register-user.js';
 import { ReplaceAvailability } from '../application/use-cases/replace-availability.js';
 import { UpdateService } from '../application/use-cases/update-service.js';
 import { UpdateUserTimezone } from '../application/use-cases/update-user-timezone.js';
 import type { Env } from '../config/env-schema.js';
 import type { PrismaClient } from './database/generated/prisma/client.js';
+import { PrismaAppointmentRepository } from './database/prisma-appointment-repository.js';
 import { PrismaAvailabilityRepository } from './database/prisma-availability-repository.js';
 import { PrismaServiceRepository } from './database/prisma-service-repository.js';
 import { PrismaTimeOffRepository } from './database/prisma-time-off-repository.js';
@@ -27,6 +33,13 @@ export function createAppDependencies(prisma: PrismaClient, env: Env): AppDepend
   const availabilityRepository = new PrismaAvailabilityRepository(prisma);
   const timeOffRepository = new PrismaTimeOffRepository(prisma);
   const clock = new SystemClock();
+  const agendaRepositories = {
+    userRepository,
+    serviceRepository,
+    availabilityRepository,
+    timeOffRepository,
+    appointmentRepository: new PrismaAppointmentRepository(prisma),
+  };
   const passwordHasher = new BcryptPasswordHasher();
   const tokenService = new JwtTokenService(env.JWT_SECRET, env.JWT_EXPIRES_IN);
 
@@ -45,5 +58,12 @@ export function createAppDependencies(prisma: PrismaClient, env: Env): AppDepend
     replaceAvailability: new ReplaceAvailability(availabilityRepository),
     createTimeOff: new CreateTimeOff(timeOffRepository, clock),
     deleteTimeOff: new DeleteTimeOff(timeOffRepository),
+    getAvailableSlots: new GetAvailableSlots(agendaRepositories, clock),
+    createAppointment: new CreateAppointment(agendaRepositories, clock),
+    cancelAppointment: new CancelAppointment(agendaRepositories.appointmentRepository, clock),
+    listClientAppointments: new ListClientAppointments(agendaRepositories.appointmentRepository),
+    listProviderAppointments: new ListProviderAppointments(
+      agendaRepositories.appointmentRepository,
+    ),
   };
 }
