@@ -4,10 +4,10 @@ import {
   MAX_SERVICE_DURATION_MINUTES,
   MAX_SERVICE_PRICE_CENTS,
   MIN_SERVICE_DURATION_MINUTES,
-  SERVICE_DURATION_STEP_MINUTES,
 } from '../../../domain/entities/service.js';
+import { SLOT_INTERVAL_MINUTES } from '../../../domain/scheduling-rules.js';
 
-const DURATION_MESSAGE = `A duração deve ser múltipla de ${String(SERVICE_DURATION_STEP_MINUTES)} minutos, entre ${String(MIN_SERVICE_DURATION_MINUTES)} e ${String(MAX_SERVICE_DURATION_MINUTES)}`;
+const DURATION_MESSAGE = `A duração deve ser múltipla de ${String(SLOT_INTERVAL_MINUTES)} minutos, entre ${String(MIN_SERVICE_DURATION_MINUTES)} e ${String(MAX_SERVICE_DURATION_MINUTES)}`;
 
 const name = z.string().trim().min(1).max(100);
 // The rule itself lives in the domain; the schema only reuses it to answer with a 400.
