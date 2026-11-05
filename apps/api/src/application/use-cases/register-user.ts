@@ -14,6 +14,7 @@ export interface RegisterUserInput {
   email: string;
   password: string;
   role: Role;
+  timezone: string;
 }
 
 export interface RegisterUserOutput {
@@ -41,6 +42,7 @@ export class RegisterUser {
       email,
       passwordHash: await this.passwordHasher.hash(input.password),
       role: input.role,
+      timezone: input.timezone,
     });
 
     const accessToken = await this.tokenService.sign({ userId: user.id, role: user.role });

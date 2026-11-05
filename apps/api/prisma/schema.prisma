@@ -18,6 +18,8 @@ model User {
   email        String         @unique
   passwordHash String
   role         Role           @default(CLIENT)
+  // Same value as DEFAULT_TIMEZONE in the domain; needed here to backfill existing rows.
+  timezone     String         @default("America/Sao_Paulo")
   createdAt    DateTime       @default(now()) @db.Timestamptz(3)
   services     Service[]
   availability Availability[]

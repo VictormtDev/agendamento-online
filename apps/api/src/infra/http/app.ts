@@ -10,6 +10,7 @@ import type { GetUserProfile } from '../../application/use-cases/get-user-profil
 import type { RegisterUser } from '../../application/use-cases/register-user.js';
 import type { ReplaceAvailability } from '../../application/use-cases/replace-availability.js';
 import type { UpdateService } from '../../application/use-cases/update-service.js';
+import type { UpdateUserTimezone } from '../../application/use-cases/update-user-timezone.js';
 import type { DatabaseCheck } from './controllers/health-controller.js';
 import { createEnsureAuthenticated } from './middlewares/ensure-authenticated.js';
 import { createEnsureRole } from './middlewares/ensure-role.js';
@@ -31,6 +32,7 @@ export interface AppDependencies {
   registerUser: RegisterUser;
   authenticateUser: AuthenticateUser;
   getUserProfile: GetUserProfile;
+  updateUserTimezone: UpdateUserTimezone;
   createService: CreateService;
   updateService: UpdateService;
   deleteService: DeleteService;
@@ -53,7 +55,7 @@ export function createApp(dependencies: AppDependencies): Express {
 
   app.use('/api/v1', createHealthRouter(dependencies.checkDatabase));
   app.use('/api/v1', createAuthRouter(dependencies.registerUser, dependencies.authenticateUser));
-  app.use('/api/v1', createProfileRouter(dependencies.getUserProfile, ensureAuthenticated));
+  app.use('/api/v1', createProfileRouter(dependencies, ensureAuthenticated));
   app.use('/api/v1', createServiceRouter(dependencies, providerOnly));
   app.use('/api/v1', createAvailabilityRouter(dependencies.replaceAvailability, providerOnly));
   app.use('/api/v1', createTimeOffRouter(dependencies, providerOnly));

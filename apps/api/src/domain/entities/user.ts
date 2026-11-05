@@ -11,6 +11,8 @@ export interface User {
   email: string;
   passwordHash: string;
   role: Role;
+  /** IANA name; availability is interpreted in it. */
+  timezone: string;
   createdAt: Date;
 }
 
@@ -22,6 +24,7 @@ export function toUserProfile(user: User): UserProfile {
     name: user.name,
     email: user.email,
     role: user.role,
+    timezone: user.timezone,
     createdAt: user.createdAt,
   };
 }

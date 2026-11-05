@@ -7,6 +7,7 @@ import { GetUserProfile } from '../../src/application/use-cases/get-user-profile
 import { RegisterUser } from '../../src/application/use-cases/register-user.js';
 import { ReplaceAvailability } from '../../src/application/use-cases/replace-availability.js';
 import { UpdateService } from '../../src/application/use-cases/update-service.js';
+import { UpdateUserTimezone } from '../../src/application/use-cases/update-user-timezone.js';
 import type { AppDependencies } from '../../src/infra/http/app.js';
 import { InMemoryAvailabilityRepository } from '../in-memory/in-memory-availability-repository.js';
 import { InMemoryServiceRepository } from '../in-memory/in-memory-service-repository.js';
@@ -30,6 +31,7 @@ export function createFakeDependencies(overrides: Partial<AppDependencies> = {})
     registerUser: new RegisterUser(userRepository, passwordHasher, tokenService),
     authenticateUser: new AuthenticateUser(userRepository, passwordHasher, tokenService),
     getUserProfile: new GetUserProfile(userRepository),
+    updateUserTimezone: new UpdateUserTimezone(userRepository),
     createService: new CreateService(serviceRepository),
     updateService: new UpdateService(serviceRepository),
     deleteService: new DeleteService(serviceRepository),

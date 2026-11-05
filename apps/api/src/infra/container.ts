@@ -7,6 +7,7 @@ import { GetUserProfile } from '../application/use-cases/get-user-profile.js';
 import { RegisterUser } from '../application/use-cases/register-user.js';
 import { ReplaceAvailability } from '../application/use-cases/replace-availability.js';
 import { UpdateService } from '../application/use-cases/update-service.js';
+import { UpdateUserTimezone } from '../application/use-cases/update-user-timezone.js';
 import type { Env } from '../config/env-schema.js';
 import type { PrismaClient } from './database/generated/prisma/client.js';
 import { PrismaAvailabilityRepository } from './database/prisma-availability-repository.js';
@@ -37,6 +38,7 @@ export function createAppDependencies(prisma: PrismaClient, env: Env): AppDepend
     registerUser: new RegisterUser(userRepository, passwordHasher, tokenService),
     authenticateUser: new AuthenticateUser(userRepository, passwordHasher, tokenService),
     getUserProfile: new GetUserProfile(userRepository),
+    updateUserTimezone: new UpdateUserTimezone(userRepository),
     createService: new CreateService(serviceRepository),
     updateService: new UpdateService(serviceRepository),
     deleteService: new DeleteService(serviceRepository),

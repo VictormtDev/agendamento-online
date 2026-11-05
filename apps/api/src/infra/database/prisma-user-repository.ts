@@ -16,6 +16,10 @@ export class PrismaUserRepository implements UserRepository {
     return this.prisma.user.findUnique({ where: { email } });
   }
 
+  updateTimezone(id: string, timezone: string): Promise<User> {
+    return this.prisma.user.update({ where: { id }, data: { timezone } });
+  }
+
   async create(data: CreateUserData): Promise<User> {
     try {
       return await this.prisma.user.create({ data });

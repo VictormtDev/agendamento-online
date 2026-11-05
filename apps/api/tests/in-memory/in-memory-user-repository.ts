@@ -26,4 +26,13 @@ export class InMemoryUserRepository implements UserRepository {
     this.users.push(user);
     return Promise.resolve(user);
   }
+
+  updateTimezone(id: string, timezone: string): Promise<User> {
+    const user = this.users.find((item) => item.id === id);
+    if (!user) {
+      return Promise.reject(new Error(`User ${id} not found`));
+    }
+    user.timezone = timezone;
+    return Promise.resolve(user);
+  }
 }

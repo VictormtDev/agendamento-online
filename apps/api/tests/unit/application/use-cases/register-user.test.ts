@@ -10,6 +10,7 @@ const VALID_INPUT = {
   email: 'ana@example.com',
   password: 'secret123',
   role: 'CLIENT',
+  timezone: 'America/Sao_Paulo',
 } as const;
 
 describe('RegisterUser', () => {

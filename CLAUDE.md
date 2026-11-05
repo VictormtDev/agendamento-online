@@ -90,7 +90,7 @@ src/
 
 ### Entidades
 
-- **User**: `id, name, email, passwordHash, role (CLIENT | PROVIDER), createdAt`
+- **User**: `id, name, email, passwordHash, role (CLIENT | PROVIDER), timezone, createdAt`
 - **Service**: serviço oferecido por um provider — `id, providerId, name, durationMinutes, priceCents, active`
 - **Availability**: janela semanal de atendimento — `id, providerId, weekday (0-6), startTime ("09:00"), endTime ("18:00")`
 - **TimeOff**: bloqueio pontual (férias, folga) — `id, providerId, startsAt, endsAt, reason`
@@ -158,6 +158,7 @@ O repositório deve capturar a violação dessa constraint e convertê-la em `Sl
 POST   /auth/register
 POST   /auth/login
 GET    /me
+PATCH  /me                                # atualiza o fuso horário (IANA)
 
 GET    /providers                         # lista pública
 GET    /providers/:id                     # perfil + serviços
@@ -254,7 +255,7 @@ Seguir em ordem. Marcar `[x]` ao concluir cada item.
 
 - [x] CRUD de serviços
 - [x] Grade semanal (Availability) e TimeOff
-- [ ] Campo timezone no provider
+- [x] Campo timezone no provider
 
 **Fase 3 — Agendamento (núcleo do projeto)**
 
