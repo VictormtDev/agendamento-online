@@ -207,7 +207,7 @@ Toda rota nova deve ser documentada no OpenAPI.
 
 - Branch principal: `main`. Trabalhar em branches `feat/...`, `fix/...`, `chore/...`, `test/...`, `docs/...`.
 - **Conventional Commits** com tipo e escopo em inglês e descrição em português: `feat(appointments): impede agendamentos sobrepostos`
-- Um commit por item do roadmap (ou por correção), sem misturar refatoração com feature.
+- Uma branch e um PR por **fase** do roadmap (ex: `feat/phase-2-provider`), com um commit por item (ou por correção), sem misturar refatoração com feature. PRs mesclados com squash.
 - Não faça commit nem push sem eu pedir.
 
 ---
@@ -248,7 +248,7 @@ Seguir em ordem. Marcar `[x]` ao concluir cada item.
 **Fase 1 — Auth**
 
 - [x] Register / login / `GET /me`, roles CLIENT e PROVIDER
-- [ ] Middleware de auth e de autorização por role
+- [x] Middleware de auth e de autorização por role
 
 **Fase 2 — Área do provider**
 
