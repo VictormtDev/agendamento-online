@@ -7,6 +7,7 @@ import { AuthProvider } from './features/auth/auth-context';
 import { RedirectIfAuthenticated, RequireAuth } from './features/auth/route-guards';
 import { BookingPage } from './pages/booking-page';
 import { LoginPage } from './pages/login-page';
+import { MyAppointmentsPage } from './pages/my-appointments-page';
 import { ProviderPage } from './pages/provider-page';
 import { ProvidersPage } from './pages/providers-page';
 import { RegisterPage } from './pages/register-page';
@@ -38,6 +39,7 @@ export function AppRoutes() {
           <Route path="/providers" element={<ProvidersPage />} />
           <Route path="/providers/:id" element={<ProviderPage />} />
           <Route path="/providers/:id/services/:serviceId/book" element={<BookingPage />} />
+          <Route path="/appointments" element={<MyAppointmentsPage />} />
         </Route>
       </Route>
     </Routes>

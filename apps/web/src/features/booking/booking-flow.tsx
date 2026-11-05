@@ -59,8 +59,8 @@ export function BookingFlow({ provider, service }: BookingFlowProps) {
       <div className="flex flex-col gap-4 rounded-lg bg-white p-6 shadow">
         <h2 className="text-xl font-semibold text-green-700">Agendamento confirmado!</h2>
         {summary(booked.startsAt)}
-        <Link to="/providers" className="text-sm text-slate-600 underline">
-          Ver outros profissionais
+        <Link to="/appointments" className="text-sm text-slate-600 underline">
+          Ver meus agendamentos
         </Link>
       </div>
     );

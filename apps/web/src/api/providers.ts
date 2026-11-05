@@ -1,12 +1,7 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { apiRequest } from './http-client';
+import { apiRequest, type Page } from './http-client';
 
 export const PROVIDERS_PER_PAGE = 12;
-
-export interface Page<T> {
-  data: T[];
-  meta: { page: number; perPage: number; total: number };
-}
 
 export interface ProviderSummary {
   id: string;

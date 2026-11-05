@@ -14,6 +14,12 @@ export class ApiError extends Error {
   }
 }
 
+/** The paginated response shape of every API listing. */
+export interface Page<T> {
+  data: T[];
+  meta: { page: number; perPage: number; total: number };
+}
+
 interface ErrorBody {
   error?: { code?: string; message?: string };
 }

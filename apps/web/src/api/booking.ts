@@ -29,7 +29,8 @@ export interface CreateAppointmentRequest {
   startsAt: string;
 }
 
-const SLOTS_KEY = 'slots';
+export const SLOTS_KEY = 'slots';
+export const APPOINTMENTS_KEY = 'appointments';
 
 export function useSlots(providerId: string, serviceId: string, date: string) {
   return useQuery({
@@ -54,6 +55,10 @@ export function useCreateAppointment() {
         })
       ).appointment,
     // Booked or refused as taken, the free slots changed either way.
-    onSettled: () => queryClient.invalidateQueries({ queryKey: [SLOTS_KEY] }),
+    onSettled: () =>
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: [SLOTS_KEY] }),
+        queryClient.invalidateQueries({ queryKey: [APPOINTMENTS_KEY] }),
+      ]),
   });
 }

@@ -1,17 +1,7 @@
-import { Link, useSearchParams } from 'react-router';
+import { Link } from 'react-router';
 import { useProviders } from '../api/providers';
-import { Button } from '../components/ui/button';
+import { Pagination, usePageParam } from '../components/ui/pagination';
 import { ErrorMessage, LoadingMessage } from '../components/ui/query-state';
-
-// The page lives in the URL, so reloading or going back keeps the user where they were.
-function usePageParam(): [number, (page: number) => void] {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const page = Math.max(1, Number(searchParams.get('page')) || 1);
-  const setPage = (next: number) => {
-    setSearchParams({ page: String(next) });
-  };
-  return [page, setPage];
-}
 
 export function ProvidersPage() {
   const [page, setPage] = usePageParam();
@@ -51,29 +41,7 @@ export function ProvidersPage() {
           ))}
         </ul>
       )}
-      {totalPages > 1 && (
-        <nav aria-label="Paginação" className="flex items-center justify-center gap-4">
-          <Button
-            disabled={page <= 1}
-            onClick={() => {
-              setPage(page - 1);
-            }}
-          >
-            Anterior
-          </Button>
-          <span className="text-sm text-slate-600">
-            Página {page} de {totalPages}
-          </span>
-          <Button
-            disabled={page >= totalPages}
-            onClick={() => {
-              setPage(page + 1);
-            }}
-          >
-            Próxima
-          </Button>
-        </nav>
-      )}
+      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
     </section>
   );
 }

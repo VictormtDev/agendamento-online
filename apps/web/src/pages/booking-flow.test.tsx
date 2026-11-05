@@ -89,6 +89,10 @@ describe('booking flow', () => {
     expect(
       await screen.findByRole('heading', { name: 'Agendamento confirmado!' }),
     ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Ver meus agendamentos' })).toHaveAttribute(
+      'href',
+      '/appointments',
+    );
     expect(sentBody(fetchMock, '/api/v1/appointments')).toEqual({
       providerId: PROVIDER_ID,
       serviceId: SERVICE_ID,

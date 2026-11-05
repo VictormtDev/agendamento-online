@@ -270,7 +270,7 @@ Seguir em ordem. Marcar `[x]` ao concluir cada item.
 - [x] Login / cadastro
 - [x] Lista de profissionais e página do profissional
 - [x] Fluxo de agendamento (serviço → data → horário → confirmação)
-- [ ] "Meus agendamentos" com cancelamento
+- [x] "Meus agendamentos" com cancelamento
 - [ ] Dashboard do provider (agenda do dia/semana, gestão de serviços e horários)
 
 **Fase 5 — Acabamento de portfólio**
