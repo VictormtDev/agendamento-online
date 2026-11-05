@@ -1,4 +1,5 @@
 import express, { type Express } from 'express';
+import swaggerUi from 'swagger-ui-express';
 import { z } from 'zod';
 import type { TokenService } from '../../application/ports/token-service.js';
 import type { AuthenticateUser } from '../../application/use-cases/authenticate-user.js';
@@ -25,6 +26,7 @@ import { createEnsureAuthenticated } from './middlewares/ensure-authenticated.js
 import { createEnsureRole } from './middlewares/ensure-role.js';
 import { errorHandler } from './middlewares/error-handler.js';
 import { notFound } from './middlewares/not-found.js';
+import { createOpenApiDocument } from './openapi/openapi-document.js';
 import { createAppointmentRouter } from './routes/appointment-routes.js';
 import { createAuthRouter } from './routes/auth-routes.js';
 import { createAvailabilityRouter } from './routes/availability-routes.js';
@@ -81,6 +83,13 @@ export function createApp(dependencies: AppDependencies): Express {
   app.use('/api/v1', createTimeOffRouter(dependencies, providerOnly));
   app.use('/api/v1', createProviderRouter(dependencies));
   app.use('/api/v1', createAppointmentRouter(dependencies, ensureAuthenticated, providerOnly));
+
+  // Outside /api/v1: the docs describe the API rather than being part of it.
+  const openApiDocument = createOpenApiDocument();
+  app.get('/docs/openapi.json', (_request, response) => {
+    response.json(openApiDocument);
+  });
+  app.use('/docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
 
   app.use(notFound);
   app.use(errorHandler);

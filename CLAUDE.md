@@ -275,7 +275,7 @@ Seguir em ordem. Marcar `[x]` ao concluir cada item.
 
 **Fase 5 — Acabamento de portfólio**
 
-- [ ] Swagger completo em `/docs`
+- [x] Swagger completo em `/docs`
 - [ ] Seed com dados de demonstração e usuários de teste
 - [ ] Deploy (API + banco + front) com link público
 - [ ] README com: problema, prints/GIF, arquitetura, decisões técnicas, como rodar, próximos passos
