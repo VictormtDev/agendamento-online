@@ -19,9 +19,15 @@ export function AppLayout() {
               Plataforma de Agendamento
             </Link>
             {user.role === 'PROVIDER' && (
-              <NavLink to="/dashboard" className={navLinkClass}>
-                Agenda
-              </NavLink>
+              <>
+                {/* end: /dashboard alone, not its subpages, marks Agenda as current. */}
+                <NavLink to="/dashboard" end className={navLinkClass}>
+                  Agenda
+                </NavLink>
+                <NavLink to="/dashboard/services" className={navLinkClass}>
+                  Serviços
+                </NavLink>
+              </>
             )}
             <NavLink to="/providers" className={navLinkClass}>
               Profissionais

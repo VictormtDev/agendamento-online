@@ -18,8 +18,9 @@ export function mockFetch(routes: Record<string, Route>) {
     const key = `${init?.method ?? 'GET'} ${url}`;
     const route = routes[key] ?? apiError(500, 'UNMOCKED_REQUEST', `Unexpected request: ${key}`);
     const { status, body } = typeof route === 'function' ? route() : route;
+    // A 204 cannot carry a body, as in the real API.
     return Promise.resolve(
-      new Response(JSON.stringify(body), {
+      new Response(status === 204 ? null : JSON.stringify(body), {
         status,
         headers: { 'Content-Type': 'application/json' },
       }),

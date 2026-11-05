@@ -1,6 +1,7 @@
 import { tokenStorage } from './token-storage';
 
 const BASE_URL = '/api/v1';
+const NO_CONTENT = 204;
 
 /** An error answered by the API (or a failure to reach it), carrying the API error code. */
 export class ApiError extends Error {
@@ -56,6 +57,9 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
 
   if (!response.ok) {
     throw await toApiError(response);
+  }
+  if (response.status === NO_CONTENT) {
+    return undefined as T;
   }
   // The response shape is the API contract, typed by the caller; it is not re-validated here.
   return (await response.json()) as T;

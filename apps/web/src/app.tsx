@@ -15,6 +15,7 @@ import { LoginPage } from './pages/login-page';
 import { MyAppointmentsPage } from './pages/my-appointments-page';
 import { ProviderAgendaPage } from './pages/provider-agenda-page';
 import { ProviderPage } from './pages/provider-page';
+import { ProviderServicesPage } from './pages/provider-services-page';
 import { ProvidersPage } from './pages/providers-page';
 import { RegisterPage } from './pages/register-page';
 
@@ -48,6 +49,7 @@ export function AppRoutes() {
           <Route path="/appointments" element={<MyAppointmentsPage />} />
           <Route element={<RequireProvider />}>
             <Route path="/dashboard" element={<ProviderAgendaPage />} />
+            <Route path="/dashboard/services" element={<ProviderServicesPage />} />
           </Route>
         </Route>
       </Route>
