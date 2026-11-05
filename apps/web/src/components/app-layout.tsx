@@ -1,5 +1,5 @@
 import { Link, NavLink, Outlet } from 'react-router';
-import { useAuth } from '../features/auth/auth-context';
+import { useAuth, useSignedInUser } from '../features/auth/auth-context';
 import { Button } from './ui/button';
 
 function navLinkClass({ isActive }: { isActive: boolean }) {
@@ -7,7 +7,8 @@ function navLinkClass({ isActive }: { isActive: boolean }) {
 }
 
 export function AppLayout() {
-  const { user, signOut } = useAuth();
+  const { signOut } = useAuth();
+  const user = useSignedInUser();
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -17,6 +18,11 @@ export function AppLayout() {
             <Link to="/providers" className="font-semibold text-slate-900">
               Plataforma de Agendamento
             </Link>
+            {user.role === 'PROVIDER' && (
+              <NavLink to="/dashboard" className={navLinkClass}>
+                Agenda
+              </NavLink>
+            )}
             <NavLink to="/providers" className={navLinkClass}>
               Profissionais
             </NavLink>
@@ -25,7 +31,7 @@ export function AppLayout() {
             </NavLink>
           </nav>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-slate-600">Olá, {user?.name}</span>
+            <span className="text-sm text-slate-600">Olá, {user.name}</span>
             <Button onClick={signOut}>Sair</Button>
           </div>
         </div>

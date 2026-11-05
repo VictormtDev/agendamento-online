@@ -10,6 +10,25 @@ export interface ClientAppointment extends Appointment {
   provider: { id: string; name: string; timezone: string };
 }
 
+export interface ProviderAppointment extends Appointment {
+  service: ServiceSummary;
+  client: { id: string; name: string };
+}
+
+export function useProviderAgenda(from: Date, to: Date) {
+  const query = new URLSearchParams({ from: from.toISOString(), to: to.toISOString() });
+  return useQuery({
+    queryKey: [APPOINTMENTS_KEY, 'agenda', query.toString()],
+    queryFn: async () =>
+      (
+        await apiRequest<{ data: ProviderAppointment[] }>(
+          `/provider/appointments?${query.toString()}`,
+        )
+      ).data,
+    placeholderData: keepPreviousData,
+  });
+}
+
 export function useMyAppointments(page: number) {
   return useQuery({
     queryKey: [APPOINTMENTS_KEY, 'mine', page],

@@ -1,13 +1,19 @@
 import { QueryClientProvider, type QueryClient } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
+import { BrowserRouter, Route, Routes } from 'react-router';
 import { createQueryClient } from './api/query-client';
 import { AppLayout } from './components/app-layout';
 import { AuthProvider } from './features/auth/auth-context';
-import { RedirectIfAuthenticated, RequireAuth } from './features/auth/route-guards';
+import {
+  HomeRedirect,
+  RedirectIfAuthenticated,
+  RequireAuth,
+  RequireProvider,
+} from './features/auth/route-guards';
 import { BookingPage } from './pages/booking-page';
 import { LoginPage } from './pages/login-page';
 import { MyAppointmentsPage } from './pages/my-appointments-page';
+import { ProviderAgendaPage } from './pages/provider-agenda-page';
 import { ProviderPage } from './pages/provider-page';
 import { ProvidersPage } from './pages/providers-page';
 import { RegisterPage } from './pages/register-page';
@@ -35,11 +41,14 @@ export function AppRoutes() {
       </Route>
       <Route element={<RequireAuth />}>
         <Route element={<AppLayout />}>
-          <Route path="/" element={<Navigate to="/providers" replace />} />
+          <Route path="/" element={<HomeRedirect />} />
           <Route path="/providers" element={<ProvidersPage />} />
           <Route path="/providers/:id" element={<ProviderPage />} />
           <Route path="/providers/:id/services/:serviceId/book" element={<BookingPage />} />
           <Route path="/appointments" element={<MyAppointmentsPage />} />
+          <Route element={<RequireProvider />}>
+            <Route path="/dashboard" element={<ProviderAgendaPage />} />
+          </Route>
         </Route>
       </Route>
     </Routes>

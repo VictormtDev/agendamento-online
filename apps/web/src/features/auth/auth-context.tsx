@@ -68,3 +68,12 @@ export function useAuth(): AuthContextValue {
   }
   return context;
 }
+
+/** For components under RequireAuth, where a signed-in user is guaranteed. */
+export function useSignedInUser(): User {
+  const { user } = useAuth();
+  if (!user) {
+    throw new Error('useSignedInUser must be used under <RequireAuth>');
+  }
+  return user;
+}

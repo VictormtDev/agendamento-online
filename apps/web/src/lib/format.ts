@@ -37,6 +37,16 @@ export function formatTime(instant: string, timezone: string): string {
   }).format(new Date(instant));
 }
 
+/** E.g. "quinta-feira, 12 de novembro". */
+export function formatDayLabel(instant: Date, timezone: string): string {
+  return new Intl.DateTimeFormat('pt-BR', {
+    timeZone: timezone,
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  }).format(instant);
+}
+
 /** E.g. "quinta-feira, 12 de novembro de 2026 às 09:00". */
 export function formatDateTime(instant: string, timezone: string): string {
   const date = new Intl.DateTimeFormat('pt-BR', { timeZone: timezone, dateStyle: 'full' }).format(

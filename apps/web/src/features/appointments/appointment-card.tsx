@@ -1,15 +1,7 @@
-import { useState } from 'react';
-import { useCancelAppointment, type ClientAppointment } from '../../api/appointments';
-import type { Appointment } from '../../api/booking';
-import { Button } from '../../components/ui/button';
+import type { ClientAppointment } from '../../api/appointments';
 import { formatDateTime, formatPrice } from '../../lib/format';
-
-const STATUS_LABELS: Record<Appointment['status'], string> = {
-  SCHEDULED: 'Agendado',
-  CANCELED: 'Cancelado',
-  COMPLETED: 'Concluído',
-  NO_SHOW: 'Não compareceu',
-};
+import { CancelAppointmentButton } from './cancel-appointment-button';
+import { STATUS_LABELS } from './status-labels';
 
 interface AppointmentCardProps {
   appointment: ClientAppointment;
@@ -17,8 +9,6 @@ interface AppointmentCardProps {
 }
 
 export function AppointmentCard({ appointment, now }: AppointmentCardProps) {
-  const [confirming, setConfirming] = useState(false);
-  const cancel = useCancelAppointment();
   const { service, provider } = appointment;
   // Only the "has it started" check lives here, to hide a pointless button. The 24-hour
   // deadline is the API's to enforce; its refusal is shown as it comes, so the rule
@@ -42,50 +32,7 @@ export function AppointmentCard({ appointment, now }: AppointmentCardProps) {
           <span className="block text-sm text-slate-600">{formatPrice(service.priceCents)}</span>
         </div>
       </div>
-
-      {cancel.error && (
-        <p role="alert" className="text-sm text-red-600">
-          {cancel.error.message}
-        </p>
-      )}
-      {canTryToCancel &&
-        (confirming ? (
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-slate-700">Cancelar este agendamento?</span>
-            <Button
-              disabled={cancel.isPending}
-              onClick={() => {
-                cancel.mutate(appointment.id, {
-                  onSettled: () => {
-                    setConfirming(false);
-                  },
-                });
-              }}
-            >
-              {cancel.isPending ? 'Cancelando...' : 'Sim, cancelar'}
-            </Button>
-            <button
-              type="button"
-              className="px-2 text-sm text-slate-700 underline"
-              onClick={() => {
-                setConfirming(false);
-              }}
-            >
-              Manter
-            </button>
-          </div>
-        ) : (
-          <button
-            type="button"
-            className="w-fit text-sm text-red-700 underline"
-            onClick={() => {
-              cancel.reset();
-              setConfirming(true);
-            }}
-          >
-            Cancelar agendamento
-          </button>
-        ))}
+      {canTryToCancel && <CancelAppointmentButton appointmentId={appointment.id} />}
     </li>
   );
 }

@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useLocation } from 'react-router';
 import { LoadingMessage } from '../../components/ui/query-state';
-import { useAuth } from './auth-context';
+import { useAuth, useSignedInUser } from './auth-context';
 
 interface RedirectState {
   from?: string;
@@ -35,6 +35,21 @@ export function RedirectIfAuthenticated() {
   if (status === 'authenticated') {
     const state = location.state as RedirectState | null;
     return <Navigate to={state?.from ?? '/'} replace />;
+  }
+  return <Outlet />;
+}
+
+/** Each role lands on its own home: providers on their agenda, clients on the providers. */
+export function HomeRedirect() {
+  const user = useSignedInUser();
+  return <Navigate to={user.role === 'PROVIDER' ? '/dashboard' : '/providers'} replace />;
+}
+
+/** The provider area; the API refuses clients anyway, this only keeps them off broken pages. */
+export function RequireProvider() {
+  const user = useSignedInUser();
+  if (user.role !== 'PROVIDER') {
+    return <Navigate to="/" replace />;
   }
   return <Outlet />;
 }
