@@ -6,6 +6,7 @@ import type { CreateTimeOff } from '../../application/use-cases/create-time-off.
 import type { CreateService } from '../../application/use-cases/create-service.js';
 import type { DeleteService } from '../../application/use-cases/delete-service.js';
 import type { DeleteTimeOff } from '../../application/use-cases/delete-time-off.js';
+import type { GetAvailableSlots } from '../../application/use-cases/get-available-slots.js';
 import type { GetUserProfile } from '../../application/use-cases/get-user-profile.js';
 import type { RegisterUser } from '../../application/use-cases/register-user.js';
 import type { ReplaceAvailability } from '../../application/use-cases/replace-availability.js';
@@ -20,6 +21,7 @@ import { createAuthRouter } from './routes/auth-routes.js';
 import { createAvailabilityRouter } from './routes/availability-routes.js';
 import { createHealthRouter } from './routes/health-routes.js';
 import { createProfileRouter } from './routes/profile-routes.js';
+import { createProviderRouter } from './routes/provider-routes.js';
 import { createServiceRouter } from './routes/service-routes.js';
 import { createTimeOffRouter } from './routes/time-off-routes.js';
 
@@ -39,6 +41,7 @@ export interface AppDependencies {
   replaceAvailability: ReplaceAvailability;
   createTimeOff: CreateTimeOff;
   deleteTimeOff: DeleteTimeOff;
+  getAvailableSlots: GetAvailableSlots;
 }
 
 // Building the app separately from listening lets tests drive it with Supertest
@@ -59,6 +62,7 @@ export function createApp(dependencies: AppDependencies): Express {
   app.use('/api/v1', createServiceRouter(dependencies, providerOnly));
   app.use('/api/v1', createAvailabilityRouter(dependencies.replaceAvailability, providerOnly));
   app.use('/api/v1', createTimeOffRouter(dependencies, providerOnly));
+  app.use('/api/v1', createProviderRouter(dependencies.getAvailableSlots));
 
   app.use(notFound);
   app.use(errorHandler);

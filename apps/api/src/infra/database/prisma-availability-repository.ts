@@ -5,6 +5,10 @@ import type { PrismaClient } from './generated/prisma/client.js';
 export class PrismaAvailabilityRepository implements AvailabilityRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
+  findByProvider(providerId: string): Promise<Availability[]> {
+    return this.prisma.availability.findMany({ where: { providerId } });
+  }
+
   async replaceForProvider(
     providerId: string,
     windows: readonly AvailabilityWindow[],

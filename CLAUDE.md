@@ -115,7 +115,7 @@ Os valores (2h, 24h, 60 dias, 15 min) ficam em constantes de domínio nomeadas, 
 - Armazenar tudo em **UTC** (`timestamptz`).
 - Cada provider tem um campo `timezone` (ex: `America/Sao_Paulo`); Availability é interpretada nesse fuso.
 - O frontend exibe no fuso do provider.
-- Use `date-fns` + `date-fns-tz` para cálculos. Nunca faça conta de data "na mão" com milissegundos espalhados pelo código.
+- Use `date-fns` + `@date-fns/tz` (`TZDate`) para cálculos. Nunca faça conta de data "na mão" com milissegundos espalhados pelo código.
 
 ### Concorrência (diferencial do projeto)
 
@@ -259,7 +259,7 @@ Seguir em ordem. Marcar `[x]` ao concluir cada item.
 
 **Fase 3 — Agendamento (núcleo do projeto)**
 
-- [ ] Cálculo de slots disponíveis (serviço de domínio + testes extensivos)
+- [x] Cálculo de slots disponíveis (serviço de domínio + testes extensivos)
 - [ ] Criar agendamento com todas as regras
 - [ ] Exclusion constraint + teste de concorrência
 - [ ] Cancelamento com regra de 24h

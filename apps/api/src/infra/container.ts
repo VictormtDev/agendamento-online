@@ -3,6 +3,7 @@ import { CreateTimeOff } from '../application/use-cases/create-time-off.js';
 import { CreateService } from '../application/use-cases/create-service.js';
 import { DeleteService } from '../application/use-cases/delete-service.js';
 import { DeleteTimeOff } from '../application/use-cases/delete-time-off.js';
+import { GetAvailableSlots } from '../application/use-cases/get-available-slots.js';
 import { GetUserProfile } from '../application/use-cases/get-user-profile.js';
 import { RegisterUser } from '../application/use-cases/register-user.js';
 import { ReplaceAvailability } from '../application/use-cases/replace-availability.js';
@@ -45,5 +46,12 @@ export function createAppDependencies(prisma: PrismaClient, env: Env): AppDepend
     replaceAvailability: new ReplaceAvailability(availabilityRepository),
     createTimeOff: new CreateTimeOff(timeOffRepository, clock),
     deleteTimeOff: new DeleteTimeOff(timeOffRepository),
+    getAvailableSlots: new GetAvailableSlots(
+      userRepository,
+      serviceRepository,
+      availabilityRepository,
+      timeOffRepository,
+      clock,
+    ),
   };
 }

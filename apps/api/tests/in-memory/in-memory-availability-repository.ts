@@ -5,6 +5,10 @@ import type { Availability, AvailabilityWindow } from '../../src/domain/entities
 export class InMemoryAvailabilityRepository implements AvailabilityRepository {
   items: Availability[] = [];
 
+  findByProvider(providerId: string): Promise<Availability[]> {
+    return Promise.resolve(this.items.filter((item) => item.providerId === providerId));
+  }
+
   replaceForProvider(
     providerId: string,
     windows: readonly AvailabilityWindow[],

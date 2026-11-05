@@ -3,6 +3,7 @@ import { CreateTimeOff } from '../../src/application/use-cases/create-time-off.j
 import { CreateService } from '../../src/application/use-cases/create-service.js';
 import { DeleteService } from '../../src/application/use-cases/delete-service.js';
 import { DeleteTimeOff } from '../../src/application/use-cases/delete-time-off.js';
+import { GetAvailableSlots } from '../../src/application/use-cases/get-available-slots.js';
 import { GetUserProfile } from '../../src/application/use-cases/get-user-profile.js';
 import { RegisterUser } from '../../src/application/use-cases/register-user.js';
 import { ReplaceAvailability } from '../../src/application/use-cases/replace-availability.js';
@@ -22,6 +23,7 @@ export function createFakeDependencies(overrides: Partial<AppDependencies> = {})
   const serviceRepository = new InMemoryServiceRepository();
   const availabilityRepository = new InMemoryAvailabilityRepository();
   const timeOffRepository = new InMemoryTimeOffRepository();
+  const clock = new FakeClock();
   const passwordHasher = new FakePasswordHasher();
   const tokenService = new FakeTokenService();
 
@@ -36,8 +38,15 @@ export function createFakeDependencies(overrides: Partial<AppDependencies> = {})
     updateService: new UpdateService(serviceRepository),
     deleteService: new DeleteService(serviceRepository),
     replaceAvailability: new ReplaceAvailability(availabilityRepository),
-    createTimeOff: new CreateTimeOff(timeOffRepository, new FakeClock()),
+    createTimeOff: new CreateTimeOff(timeOffRepository, clock),
     deleteTimeOff: new DeleteTimeOff(timeOffRepository),
+    getAvailableSlots: new GetAvailableSlots(
+      userRepository,
+      serviceRepository,
+      availabilityRepository,
+      timeOffRepository,
+      clock,
+    ),
     ...overrides,
   };
 }
