@@ -7,7 +7,6 @@ import {
   createDeleteServiceController,
   createUpdateServiceController,
 } from '../controllers/service-controller.js';
-import { createEnsureRole } from '../middlewares/ensure-role.js';
 
 interface ServiceUseCases {
   createService: CreateService;
@@ -17,15 +16,19 @@ interface ServiceUseCases {
 
 export function createServiceRouter(
   useCases: ServiceUseCases,
-  ensureAuthenticated: RequestHandler,
+  providerOnly: RequestHandler[],
 ): Router {
   const router = Router();
-  // Guards go on each route rather than router.use(): this router is mounted at
-  // /api/v1, so a router-level guard would turn every unknown URL into a 401.
-  const guards = [ensureAuthenticated, createEnsureRole('PROVIDER')];
-
-  router.post('/services', guards, createCreateServiceController(useCases.createService));
-  router.patch('/services/:id', guards, createUpdateServiceController(useCases.updateService));
-  router.delete('/services/:id', guards, createDeleteServiceController(useCases.deleteService));
+  router.post('/services', providerOnly, createCreateServiceController(useCases.createService));
+  router.patch(
+    '/services/:id',
+    providerOnly,
+    createUpdateServiceController(useCases.updateService),
+  );
+  router.delete(
+    '/services/:id',
+    providerOnly,
+    createDeleteServiceController(useCases.deleteService),
+  );
   return router;
 }

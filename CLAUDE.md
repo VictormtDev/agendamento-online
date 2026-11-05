@@ -253,7 +253,7 @@ Seguir em ordem. Marcar `[x]` ao concluir cada item.
 **Fase 2 — Área do provider**
 
 - [x] CRUD de serviços
-- [ ] Grade semanal (Availability) e TimeOff
+- [x] Grade semanal (Availability) e TimeOff
 - [ ] Campo timezone no provider
 
 **Fase 3 — Agendamento (núcleo do projeto)**

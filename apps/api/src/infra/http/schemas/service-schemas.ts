@@ -27,5 +27,3 @@ export const updateServiceBodySchema = z
     active: z.boolean().exactOptional(),
   })
   .refine((changes) => Object.keys(changes).length > 0, 'Informe ao menos um campo para atualizar');
-
-export const serviceParamsSchema = z.object({ id: z.uuid() });
