@@ -1,20 +1,14 @@
 import request from 'supertest';
-import { afterAll, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
+import { env } from '../../src/config/env.js';
+import { createAppDependencies } from '../../src/infra/container.js';
 import { prisma } from '../../src/infra/database/prisma-client.js';
 import { createApp } from '../../src/infra/http/app.js';
 
 // Exercises the real wiring (env -> PrismaPg adapter -> Postgres) that unit tests fake out.
 describe('GET /api/v1/health (real database)', () => {
-  afterAll(async () => {
-    await prisma.$disconnect();
-  });
-
   it('should return 200 when connected to the test database', async () => {
-    const app = createApp({
-      checkDatabase: async () => {
-        await prisma.$queryRaw`SELECT 1`;
-      },
-    });
+    const app = createApp(createAppDependencies(prisma, env));
 
     const response = await request(app).get('/api/v1/health');
 

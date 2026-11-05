@@ -17,6 +17,8 @@ export default defineConfig({
         test: {
           name: 'integration',
           include: ['tests/integration/**/*.test.ts'],
+          globalSetup: ['tests/integration/global-setup.ts'],
+          setupFiles: ['tests/integration/setup.ts'],
           env: parseEnv(readFileSync('.env.test', 'utf8')),
           // All files share one database, so running them in parallel would let one
           // file's cleanup wipe data another file is still asserting on.
