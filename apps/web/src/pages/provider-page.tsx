@@ -33,9 +33,18 @@ export function ProviderPage() {
                       {formatDuration(service.durationMinutes)}
                     </span>
                   </div>
-                  <span className="font-medium text-slate-900">
-                    {formatPrice(service.priceCents)}
-                  </span>
+                  <div className="flex items-center gap-4">
+                    <span className="font-medium text-slate-900">
+                      {formatPrice(service.priceCents)}
+                    </span>
+                    <Link
+                      to={`/providers/${profile.data.provider.id}/services/${service.id}/book`}
+                      aria-label={`Agendar ${service.name}`}
+                      className="rounded-md bg-slate-900 px-4 py-2 font-medium text-white hover:bg-slate-700"
+                    >
+                      Agendar
+                    </Link>
+                  </div>
                 </li>
               ))}
             </ul>

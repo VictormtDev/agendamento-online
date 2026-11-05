@@ -16,3 +16,31 @@ export function formatDuration(totalMinutes: number): string {
   }
   return minutes === 0 ? `${String(hours)} h` : `${String(hours)} h ${String(minutes)} min`;
 }
+
+/** Today's calendar date ("YYYY-MM-DD") in a timezone; en-CA writes dates in ISO order. */
+export function todayIn(timezone: string, now: Date = new Date()): string {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: timezone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(now);
+}
+
+// Times are shown in the provider timezone: that is where the appointment happens,
+// whatever the clock of the device showing it.
+export function formatTime(instant: string, timezone: string): string {
+  return new Intl.DateTimeFormat('pt-BR', {
+    timeZone: timezone,
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(new Date(instant));
+}
+
+/** E.g. "quinta-feira, 12 de novembro de 2026 às 09:00". */
+export function formatDateTime(instant: string, timezone: string): string {
+  const date = new Intl.DateTimeFormat('pt-BR', { timeZone: timezone, dateStyle: 'full' }).format(
+    new Date(instant),
+  );
+  return `${date} às ${formatTime(instant, timezone)}`;
+}

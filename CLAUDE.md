@@ -269,7 +269,7 @@ Seguir em ordem. Marcar `[x]` ao concluir cada item.
 
 - [x] Login / cadastro
 - [x] Lista de profissionais e página do profissional
-- [ ] Fluxo de agendamento (serviço → data → horário → confirmação)
+- [x] Fluxo de agendamento (serviço → data → horário → confirmação)
 - [ ] "Meus agendamentos" com cancelamento
 - [ ] Dashboard do provider (agenda do dia/semana, gestão de serviços e horários)
 

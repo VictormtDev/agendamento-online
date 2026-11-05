@@ -5,6 +5,7 @@ import { createQueryClient } from './api/query-client';
 import { AppLayout } from './components/app-layout';
 import { AuthProvider } from './features/auth/auth-context';
 import { RedirectIfAuthenticated, RequireAuth } from './features/auth/route-guards';
+import { BookingPage } from './pages/booking-page';
 import { LoginPage } from './pages/login-page';
 import { ProviderPage } from './pages/provider-page';
 import { ProvidersPage } from './pages/providers-page';
@@ -36,6 +37,7 @@ export function AppRoutes() {
           <Route path="/" element={<Navigate to="/providers" replace />} />
           <Route path="/providers" element={<ProvidersPage />} />
           <Route path="/providers/:id" element={<ProviderPage />} />
+          <Route path="/providers/:id/services/:serviceId/book" element={<BookingPage />} />
         </Route>
       </Route>
     </Routes>
