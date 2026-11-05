@@ -268,7 +268,7 @@ Seguir em ordem. Marcar `[x]` ao concluir cada item.
 **Fase 4 — Frontend**
 
 - [x] Login / cadastro
-- [ ] Lista de profissionais e página do profissional
+- [x] Lista de profissionais e página do profissional
 - [ ] Fluxo de agendamento (serviço → data → horário → confirmação)
 - [ ] "Meus agendamentos" com cancelamento
 - [ ] Dashboard do provider (agenda do dia/semana, gestão de serviços e horários)

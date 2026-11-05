@@ -7,6 +7,14 @@ import { renderApp } from '../../test/render-app';
 
 const TOKEN_KEY = 'agendamento.accessToken';
 
+// Signing in lands on the provider list, which is not under test here.
+const providerList = {
+  'GET /api/v1/providers?page=1&perPage=12': {
+    status: 200,
+    body: { data: [], meta: { page: 1, perPage: 12, total: 0 } },
+  },
+};
+
 const user: User = {
   id: 'b6f0c1a2-0000-4000-8000-000000000001',
   name: 'Carla Dias',
@@ -32,6 +40,7 @@ describe('authentication flow', () => {
   describe('login', () => {
     it('should sign in, store the token and show the home page', async () => {
       const fetchMock = mockFetch({
+        ...providerList,
         'POST /api/v1/auth/login': { status: 200, body: { user, accessToken: 'token-123' } },
       });
       renderApp('/login');
@@ -40,7 +49,7 @@ describe('authentication flow', () => {
       await userEvent.type(screen.getByLabelText('Senha'), 'secret123');
       await userEvent.click(screen.getByRole('button', { name: 'Entrar' }));
 
-      expect(await screen.findByRole('heading', { name: 'Olá, Carla Dias' })).toBeInTheDocument();
+      expect(await screen.findByText('Olá, Carla Dias')).toBeInTheDocument();
       expect(sentBody(fetchMock)).toEqual({ email: 'carla@example.com', password: 'secret123' });
       expect(localStorage.getItem(TOKEN_KEY)).toBe('token-123');
     });
@@ -86,6 +95,7 @@ describe('authentication flow', () => {
     it('should create a provider account and sign in', async () => {
       const provider: User = { ...user, name: 'Bruno Lima', role: 'PROVIDER' };
       const fetchMock = mockFetch({
+        ...providerList,
         'POST /api/v1/auth/register': {
           status: 201,
           body: { user: provider, accessToken: 'token-456' },
@@ -97,7 +107,7 @@ describe('authentication flow', () => {
       await userEvent.click(screen.getByLabelText('Sou profissional e ofereço serviços'));
       await userEvent.click(screen.getByRole('button', { name: 'Criar conta' }));
 
-      expect(await screen.findByRole('heading', { name: 'Olá, Bruno Lima' })).toBeInTheDocument();
+      expect(await screen.findByText('Olá, Bruno Lima')).toBeInTheDocument();
       expect(sentBody(fetchMock)).toEqual({
         name: 'Bruno Lima',
         email: 'bruno@example.com',
@@ -135,10 +145,13 @@ describe('authentication flow', () => {
   describe('session', () => {
     it('should restore the session from the stored token', async () => {
       localStorage.setItem(TOKEN_KEY, 'token-123');
-      const fetchMock = mockFetch({ 'GET /api/v1/me': { status: 200, body: { user } } });
+      const fetchMock = mockFetch({
+        ...providerList,
+        'GET /api/v1/me': { status: 200, body: { user } },
+      });
       renderApp('/');
 
-      expect(await screen.findByRole('heading', { name: 'Olá, Carla Dias' })).toBeInTheDocument();
+      expect(await screen.findByText('Olá, Carla Dias')).toBeInTheDocument();
       expect(fetchMock.mock.calls[0]?.[1]?.headers).toMatchObject({
         Authorization: 'Bearer token-123',
       });
@@ -155,7 +168,7 @@ describe('authentication flow', () => {
 
     it('should sign out and return to the login page', async () => {
       localStorage.setItem(TOKEN_KEY, 'token-123');
-      mockFetch({ 'GET /api/v1/me': { status: 200, body: { user } } });
+      mockFetch({ ...providerList, 'GET /api/v1/me': { status: 200, body: { user } } });
       renderApp('/');
 
       await userEvent.click(await screen.findByRole('button', { name: 'Sair' }));
@@ -166,10 +179,10 @@ describe('authentication flow', () => {
 
     it('should keep a signed-in user out of the login page', async () => {
       localStorage.setItem(TOKEN_KEY, 'token-123');
-      mockFetch({ 'GET /api/v1/me': { status: 200, body: { user } } });
+      mockFetch({ ...providerList, 'GET /api/v1/me': { status: 200, body: { user } } });
       renderApp('/login');
 
-      expect(await screen.findByRole('heading', { name: 'Olá, Carla Dias' })).toBeInTheDocument();
+      expect(await screen.findByText('Olá, Carla Dias')).toBeInTheDocument();
     });
   });
 });
