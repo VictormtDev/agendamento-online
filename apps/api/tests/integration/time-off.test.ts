@@ -135,4 +135,34 @@ describe('Time off API', () => {
       expect(response.status).toBe(404);
     });
   });
+
+  describe('GET /api/v1/time-off', () => {
+    it('should list the upcoming time offs of the provider by start', async () => {
+      const provider = await signUp('pro@example.com');
+      const other = await signUp('other@example.com');
+      const later = await create(provider.auth);
+      const sooner = await create(provider.auth, {
+        startsAt: '2030-06-01T03:00:00.000Z',
+        endsAt: '2030-06-02T03:00:00.000Z',
+      });
+      await create(other.auth);
+
+      const response = await request(app).get('/api/v1/time-off').set(provider.auth);
+
+      expect(response.status).toBe(200);
+      expect((response.body.timeOffs as { id: string }[]).map((item) => item.id)).toEqual([
+        sooner.body.timeOff.id,
+        later.body.timeOff.id,
+      ]);
+      expect(response.body.timeOffs[1]).toMatchObject(VACATION);
+    });
+
+    it('should return 403 for a CLIENT', async () => {
+      const client = await signUp('client@example.com', 'CLIENT');
+
+      const response = await request(app).get('/api/v1/time-off').set(client.auth);
+
+      expect(response.status).toBe(403);
+    });
+  });
 });

@@ -166,8 +166,8 @@ GET    /providers/:id/slots?serviceId=&date=YYYY-MM-DD   # horários livres no d
 
 # área do provider (role PROVIDER)
 POST   /services          PATCH /services/:id          DELETE /services/:id
-PUT    /availability                       # substitui a grade semanal inteira
-POST   /time-off          DELETE /time-off/:id
+GET    /availability      PUT /availability   # lê / substitui a grade semanal inteira
+GET    /time-off          POST /time-off      DELETE /time-off/:id   # GET lista as folgas não encerradas
 GET    /provider/appointments?from=&to=
 
 # área do cliente
@@ -267,11 +267,11 @@ Seguir em ordem. Marcar `[x]` ao concluir cada item.
 
 **Fase 4 — Frontend**
 
-- [ ] Login / cadastro
-- [ ] Lista de profissionais e página do profissional
-- [ ] Fluxo de agendamento (serviço → data → horário → confirmação)
-- [ ] "Meus agendamentos" com cancelamento
-- [ ] Dashboard do provider (agenda do dia/semana, gestão de serviços e horários)
+- [x] Login / cadastro
+- [x] Lista de profissionais e página do profissional
+- [x] Fluxo de agendamento (serviço → data → horário → confirmação)
+- [x] "Meus agendamentos" com cancelamento
+- [x] Dashboard do provider (agenda do dia/semana, gestão de serviços e horários)
 
 **Fase 5 — Acabamento de portfólio**
 

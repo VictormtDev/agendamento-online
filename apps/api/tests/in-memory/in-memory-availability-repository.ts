@@ -6,7 +6,11 @@ export class InMemoryAvailabilityRepository implements AvailabilityRepository {
   items: Availability[] = [];
 
   findByProvider(providerId: string): Promise<Availability[]> {
-    return Promise.resolve(this.items.filter((item) => item.providerId === providerId));
+    return Promise.resolve(
+      this.items
+        .filter((item) => item.providerId === providerId)
+        .sort((a, b) => a.weekday - b.weekday || a.startTime.localeCompare(b.startTime)),
+    );
   }
 
   replaceForProvider(

@@ -1,4 +1,9 @@
-import type { CreateUserData, UserRepository } from '../../application/ports/user-repository.js';
+import type { Pagination } from '../../application/pagination.js';
+import type {
+  CreateUserData,
+  ProviderSummary,
+  UserRepository,
+} from '../../application/ports/user-repository.js';
 import type { User } from '../../domain/entities/user.js';
 import { EmailAlreadyInUseError } from '../../domain/errors/email-already-in-use-error.js';
 import { Prisma, type PrismaClient } from './generated/prisma/client.js';
@@ -18,6 +23,40 @@ export class PrismaUserRepository implements UserRepository {
 
   updateTimezone(id: string, timezone: string): Promise<User> {
     return this.prisma.user.update({ where: { id }, data: { timezone } });
+  }
+
+  async listBookableProviders({
+    page,
+    perPage,
+  }: Pagination): Promise<{ items: ProviderSummary[]; total: number }> {
+    const where = {
+      role: 'PROVIDER',
+      services: { some: { active: true } },
+    } satisfies Prisma.UserWhereInput;
+    // Same transaction so the total always matches the page; the id breaks ties
+    // between equal names, keeping pages stable.
+    const [rows, total] = await this.prisma.$transaction([
+      this.prisma.user.findMany({
+        where,
+        orderBy: [{ name: 'asc' }, { id: 'asc' }],
+        skip: (page - 1) * perPage,
+        take: perPage,
+        select: {
+          id: true,
+          name: true,
+          _count: { select: { services: { where: { active: true } } } },
+        },
+      }),
+      this.prisma.user.count({ where }),
+    ]);
+    return {
+      items: rows.map((row) => ({
+        id: row.id,
+        name: row.name,
+        activeServiceCount: row._count.services,
+      })),
+      total,
+    };
   }
 
   async create(data: CreateUserData): Promise<User> {

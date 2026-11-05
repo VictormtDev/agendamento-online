@@ -1,7 +1,72 @@
+import { QueryClientProvider, type QueryClient } from '@tanstack/react-query';
+import type { ReactNode } from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router';
+import { createQueryClient } from './api/query-client';
+import { AppLayout } from './components/app-layout';
+import { AuthProvider } from './features/auth/auth-context';
+import {
+  HomeRedirect,
+  RedirectIfAuthenticated,
+  RequireAuth,
+  RequireProvider,
+} from './features/auth/route-guards';
+import { BookingPage } from './pages/booking-page';
+import { LoginPage } from './pages/login-page';
+import { MyAppointmentsPage } from './pages/my-appointments-page';
+import { ProviderAgendaPage } from './pages/provider-agenda-page';
+import { ProviderPage } from './pages/provider-page';
+import { ProviderSchedulePage } from './pages/provider-schedule-page';
+import { ProviderServicesPage } from './pages/provider-services-page';
+import { ProvidersPage } from './pages/providers-page';
+import { RegisterPage } from './pages/register-page';
+
+export function AppProviders({
+  queryClient,
+  children,
+}: {
+  queryClient: QueryClient;
+  children: ReactNode;
+}) {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>{children}</AuthProvider>
+    </QueryClientProvider>
+  );
+}
+
+export function AppRoutes() {
+  return (
+    <Routes>
+      <Route element={<RedirectIfAuthenticated />}>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+      </Route>
+      <Route element={<RequireAuth />}>
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<HomeRedirect />} />
+          <Route path="/providers" element={<ProvidersPage />} />
+          <Route path="/providers/:id" element={<ProviderPage />} />
+          <Route path="/providers/:id/services/:serviceId/book" element={<BookingPage />} />
+          <Route path="/appointments" element={<MyAppointmentsPage />} />
+          <Route element={<RequireProvider />}>
+            <Route path="/dashboard" element={<ProviderAgendaPage />} />
+            <Route path="/dashboard/services" element={<ProviderServicesPage />} />
+            <Route path="/dashboard/availability" element={<ProviderSchedulePage />} />
+          </Route>
+        </Route>
+      </Route>
+    </Routes>
+  );
+}
+
+const queryClient = createQueryClient();
+
 export function App() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-50">
-      <h1 className="text-3xl font-semibold text-slate-900">Plataforma de Agendamento</h1>
-    </main>
+    <AppProviders queryClient={queryClient}>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </AppProviders>
   );
 }

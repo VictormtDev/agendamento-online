@@ -14,6 +14,14 @@ export class InMemoryServiceRepository implements ServiceRepository {
     return Promise.resolve(service ?? null);
   }
 
+  listActiveByProvider(providerId: string): Promise<Service[]> {
+    return Promise.resolve(
+      this.services
+        .filter((item) => item.providerId === providerId && item.active)
+        .sort((a, b) => a.name.localeCompare(b.name)),
+    );
+  }
+
   create(data: CreateServiceData): Promise<Service> {
     const service: Service = { id: randomUUID(), active: true, createdAt: new Date(), ...data };
     this.services.push(service);

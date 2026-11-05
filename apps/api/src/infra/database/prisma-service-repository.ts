@@ -13,6 +13,13 @@ export class PrismaServiceRepository implements ServiceRepository {
     return this.prisma.service.findFirst({ where: { id, providerId } });
   }
 
+  listActiveByProvider(providerId: string): Promise<Service[]> {
+    return this.prisma.service.findMany({
+      where: { providerId, active: true },
+      orderBy: [{ name: 'asc' }, { id: 'asc' }],
+    });
+  }
+
   create(data: CreateServiceData): Promise<Service> {
     return this.prisma.service.create({ data });
   }
