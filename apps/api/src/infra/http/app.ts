@@ -10,6 +10,8 @@ import type { DeleteService } from '../../application/use-cases/delete-service.j
 import type { DeleteTimeOff } from '../../application/use-cases/delete-time-off.js';
 import type { GetAvailableSlots } from '../../application/use-cases/get-available-slots.js';
 import type { GetUserProfile } from '../../application/use-cases/get-user-profile.js';
+import type { ListClientAppointments } from '../../application/use-cases/list-client-appointments.js';
+import type { ListProviderAppointments } from '../../application/use-cases/list-provider-appointments.js';
 import type { RegisterUser } from '../../application/use-cases/register-user.js';
 import type { ReplaceAvailability } from '../../application/use-cases/replace-availability.js';
 import type { UpdateService } from '../../application/use-cases/update-service.js';
@@ -47,6 +49,8 @@ export interface AppDependencies {
   getAvailableSlots: GetAvailableSlots;
   createAppointment: CreateAppointment;
   cancelAppointment: CancelAppointment;
+  listClientAppointments: ListClientAppointments;
+  listProviderAppointments: ListProviderAppointments;
 }
 
 // Building the app separately from listening lets tests drive it with Supertest
@@ -68,7 +72,7 @@ export function createApp(dependencies: AppDependencies): Express {
   app.use('/api/v1', createAvailabilityRouter(dependencies.replaceAvailability, providerOnly));
   app.use('/api/v1', createTimeOffRouter(dependencies, providerOnly));
   app.use('/api/v1', createProviderRouter(dependencies.getAvailableSlots));
-  app.use('/api/v1', createAppointmentRouter(dependencies, ensureAuthenticated));
+  app.use('/api/v1', createAppointmentRouter(dependencies, ensureAuthenticated, providerOnly));
 
   app.use(notFound);
   app.use(errorHandler);

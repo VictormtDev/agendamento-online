@@ -14,12 +14,14 @@ export const FIXTURE_DATE = '2026-11-05';
  * (12:00-14:00 UTC). "Now" is the day before, 09:00 local.
  */
 export async function createAgendaFixture() {
+  const userRepository = new InMemoryUserRepository();
+  const serviceRepository = new InMemoryServiceRepository();
   const repositories = {
-    userRepository: new InMemoryUserRepository(),
-    serviceRepository: new InMemoryServiceRepository(),
+    userRepository,
+    serviceRepository,
     availabilityRepository: new InMemoryAvailabilityRepository(),
     timeOffRepository: new InMemoryTimeOffRepository(),
-    appointmentRepository: new InMemoryAppointmentRepository(),
+    appointmentRepository: new InMemoryAppointmentRepository(userRepository, serviceRepository),
   } satisfies AgendaRepositories;
   const clock = new FakeClock(new Date('2026-11-04T12:00:00.000Z'));
 

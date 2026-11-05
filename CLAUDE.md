@@ -263,7 +263,7 @@ Seguir em ordem. Marcar `[x]` ao concluir cada item.
 - [x] Criar agendamento com todas as regras
 - [x] Exclusion constraint + teste de concorrência
 - [x] Cancelamento com regra de 24h
-- [ ] Listagens do cliente e do provider
+- [x] Listagens do cliente e do provider
 
 **Fase 4 — Frontend**
 

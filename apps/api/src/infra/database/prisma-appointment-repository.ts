@@ -1,6 +1,10 @@
 import type {
   AppointmentRepository,
+  ClientAppointmentsQuery,
+  ClientAppointmentView,
   CreateAppointmentData,
+  ProviderAppointmentsQuery,
+  ProviderAppointmentView,
 } from '../../application/ports/appointment-repository.js';
 import type { Appointment } from '../../domain/entities/appointment.js';
 import { SlotUnavailableError } from '../../domain/errors/slot-unavailable-error.js';
@@ -9,6 +13,10 @@ import { Prisma, type PrismaClient } from './generated/prisma/client.js';
 
 const EXCLUSION_VIOLATION = '23P01';
 const NO_OVERLAP_CONSTRAINT = 'no_overlapping_appointments';
+
+const SERVICE_SUMMARY = {
+  select: { id: true, name: true, durationMinutes: true, priceCents: true },
+} as const;
 
 // Prisma has no dedicated code for exclusion constraints: with a driver adapter it
 // reports a generic error and keeps the Postgres one in an untyped `meta`, so it is
@@ -44,6 +52,47 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
         startsAt: { lt: interval.end },
         endsAt: { gt: interval.start },
       },
+    });
+  }
+
+  async listByClient({
+    clientId,
+    status,
+    page,
+    perPage,
+  }: ClientAppointmentsQuery): Promise<{ items: ClientAppointmentView[]; total: number }> {
+    const where = { clientId, ...(status && { status }) };
+    // Same filter for both queries inside one transaction, so total matches the page.
+    const [items, total] = await this.prisma.$transaction([
+      this.prisma.appointment.findMany({
+        where,
+        include: {
+          service: SERVICE_SUMMARY,
+          provider: { select: { id: true, name: true, timezone: true } },
+        },
+        orderBy: { startsAt: 'desc' },
+        skip: (page - 1) * perPage,
+        take: perPage,
+      }),
+      this.prisma.appointment.count({ where }),
+    ]);
+    return { items, total };
+  }
+
+  listByProvider({
+    providerId,
+    interval,
+    status,
+  }: ProviderAppointmentsQuery): Promise<ProviderAppointmentView[]> {
+    return this.prisma.appointment.findMany({
+      where: {
+        providerId,
+        startsAt: { lt: interval.end },
+        endsAt: { gt: interval.start },
+        ...(status && { status }),
+      },
+      include: { service: SERVICE_SUMMARY, client: { select: { id: true, name: true } } },
+      orderBy: { startsAt: 'asc' },
     });
   }
 

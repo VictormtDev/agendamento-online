@@ -7,6 +7,8 @@ import { DeleteService } from '../../src/application/use-cases/delete-service.js
 import { DeleteTimeOff } from '../../src/application/use-cases/delete-time-off.js';
 import { GetAvailableSlots } from '../../src/application/use-cases/get-available-slots.js';
 import { GetUserProfile } from '../../src/application/use-cases/get-user-profile.js';
+import { ListClientAppointments } from '../../src/application/use-cases/list-client-appointments.js';
+import { ListProviderAppointments } from '../../src/application/use-cases/list-provider-appointments.js';
 import { RegisterUser } from '../../src/application/use-cases/register-user.js';
 import { ReplaceAvailability } from '../../src/application/use-cases/replace-availability.js';
 import { UpdateService } from '../../src/application/use-cases/update-service.js';
@@ -32,7 +34,7 @@ export function createFakeDependencies(overrides: Partial<AppDependencies> = {})
     serviceRepository,
     availabilityRepository,
     timeOffRepository,
-    appointmentRepository: new InMemoryAppointmentRepository(),
+    appointmentRepository: new InMemoryAppointmentRepository(userRepository, serviceRepository),
   };
   const passwordHasher = new FakePasswordHasher();
   const tokenService = new FakeTokenService();
@@ -53,6 +55,10 @@ export function createFakeDependencies(overrides: Partial<AppDependencies> = {})
     getAvailableSlots: new GetAvailableSlots(agendaRepositories, clock),
     createAppointment: new CreateAppointment(agendaRepositories, clock),
     cancelAppointment: new CancelAppointment(agendaRepositories.appointmentRepository, clock),
+    listClientAppointments: new ListClientAppointments(agendaRepositories.appointmentRepository),
+    listProviderAppointments: new ListProviderAppointments(
+      agendaRepositories.appointmentRepository,
+    ),
     ...overrides,
   };
 }
