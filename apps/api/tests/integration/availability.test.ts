@@ -108,4 +108,38 @@ describe('Availability API', () => {
 
     expect(response.status).toBe(401);
   });
+
+  describe('GET /api/v1/availability', () => {
+    it('should return the saved grid of the provider, ordered', async () => {
+      const provider = await signUp('pro@example.com');
+      const other = await signUp('other@example.com');
+      await replace(provider.auth, WEEK);
+      await replace(other.auth, [{ weekday: 0, startTime: '09:00', endTime: '10:00' }]);
+
+      const response = await request(app).get('/api/v1/availability').set(provider.auth);
+
+      expect(response.status).toBe(200);
+      expect(response.body.availability).toEqual([
+        { id: expect.any(String), providerId: provider.userId, ...WEEK[2] },
+        { id: expect.any(String), providerId: provider.userId, ...WEEK[1] },
+        { id: expect.any(String), providerId: provider.userId, ...WEEK[0] },
+      ]);
+    });
+
+    it('should return an empty grid before the first save', async () => {
+      const provider = await signUp('pro@example.com');
+
+      const response = await request(app).get('/api/v1/availability').set(provider.auth);
+
+      expect(response.body.availability).toEqual([]);
+    });
+
+    it('should return 403 for a CLIENT', async () => {
+      const client = await signUp('client@example.com', 'CLIENT');
+
+      const response = await request(app).get('/api/v1/availability').set(client.auth);
+
+      expect(response.status).toBe(403);
+    });
+  });
 });

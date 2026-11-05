@@ -19,6 +19,13 @@ export class PrismaTimeOffRepository implements TimeOffRepository {
     });
   }
 
+  listEndingAfter(providerId: string, instant: Date): Promise<TimeOff[]> {
+    return this.prisma.timeOff.findMany({
+      where: { providerId, endsAt: { gt: instant } },
+      orderBy: [{ startsAt: 'asc' }, { id: 'asc' }],
+    });
+  }
+
   create(data: CreateTimeOffData): Promise<TimeOff> {
     return this.prisma.timeOff.create({ data });
   }

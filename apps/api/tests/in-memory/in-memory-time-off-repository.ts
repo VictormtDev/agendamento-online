@@ -25,6 +25,14 @@ export class InMemoryTimeOffRepository implements TimeOffRepository {
     );
   }
 
+  listEndingAfter(providerId: string, instant: Date): Promise<TimeOff[]> {
+    return Promise.resolve(
+      this.items
+        .filter((item) => item.providerId === providerId && item.endsAt > instant)
+        .sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime()),
+    );
+  }
+
   create(data: CreateTimeOffData): Promise<TimeOff> {
     const timeOff: TimeOff = { id: randomUUID(), createdAt: new Date(), ...data };
     this.items.push(timeOff);

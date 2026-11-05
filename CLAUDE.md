@@ -166,8 +166,8 @@ GET    /providers/:id/slots?serviceId=&date=YYYY-MM-DD   # horários livres no d
 
 # área do provider (role PROVIDER)
 POST   /services          PATCH /services/:id          DELETE /services/:id
-PUT    /availability                       # substitui a grade semanal inteira
-POST   /time-off          DELETE /time-off/:id
+GET    /availability      PUT /availability   # lê / substitui a grade semanal inteira
+GET    /time-off          POST /time-off      DELETE /time-off/:id   # GET lista as folgas não encerradas
 GET    /provider/appointments?from=&to=
 
 # área do cliente

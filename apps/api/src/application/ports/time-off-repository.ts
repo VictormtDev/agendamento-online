@@ -8,6 +8,8 @@ export interface TimeOffRepository {
   findByIdAndProvider(id: string, providerId: string): Promise<TimeOff | null>;
   /** Time offs of the provider that intersect the interval; merely touching it does not count. */
   findOverlapping(providerId: string, interval: TimeInterval): Promise<TimeOff[]>;
+  /** Time offs of the provider still running or ahead of the instant, ordered by start. */
+  listEndingAfter(providerId: string, instant: Date): Promise<TimeOff[]>;
   create(data: CreateTimeOffData): Promise<TimeOff>;
   delete(id: string): Promise<void>;
 }

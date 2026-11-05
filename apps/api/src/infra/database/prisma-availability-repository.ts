@@ -6,7 +6,10 @@ export class PrismaAvailabilityRepository implements AvailabilityRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
   findByProvider(providerId: string): Promise<Availability[]> {
-    return this.prisma.availability.findMany({ where: { providerId } });
+    return this.prisma.availability.findMany({
+      where: { providerId },
+      orderBy: [{ weekday: 'asc' }, { startTime: 'asc' }],
+    });
   }
 
   async replaceForProvider(
@@ -21,9 +24,6 @@ export class PrismaAvailabilityRepository implements AvailabilityRepository {
         data: windows.map((window) => ({ ...window, providerId })),
       }),
     ]);
-    return this.prisma.availability.findMany({
-      where: { providerId },
-      orderBy: [{ weekday: 'asc' }, { startTime: 'asc' }],
-    });
+    return this.findByProvider(providerId);
   }
 }
