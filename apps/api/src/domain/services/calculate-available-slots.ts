@@ -1,5 +1,5 @@
 import { TZDate } from '@date-fns/tz';
-import { addDays, addHours, addMinutes, areIntervalsOverlapping } from 'date-fns';
+import { addDays, addHours, addMinutes, areIntervalsOverlapping, format } from 'date-fns';
 import type { AvailabilityWindow } from '../entities/availability.js';
 import {
   MAX_BOOKING_WINDOW_DAYS,
@@ -61,6 +61,11 @@ function mergeTouchingWindows(windows: readonly AvailabilityWindow[]): Availabil
     }
   }
   return merged;
+}
+
+/** The calendar day "YYYY-MM-DD" an instant falls on, as seen in the given timezone. */
+export function toCalendarDate(instant: Date, timezone: string): string {
+  return format(new TZDate(instant, timezone), 'yyyy-MM-dd');
 }
 
 /** The UTC interval covering the whole calendar day in the given timezone (23 to 25 hours long). */

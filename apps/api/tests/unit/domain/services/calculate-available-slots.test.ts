@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   calculateAvailableSlots,
   getDayInterval,
+  toCalendarDate,
   type SlotQuery,
 } from '../../../../src/domain/services/calculate-available-slots.js';
 
@@ -217,6 +218,14 @@ describe('calculateAvailableSlots', () => {
       expect(starts[0]).toBe(utc('05:00', '2026-11-01'));
       expect(starts.at(-1)).toBe(utc('07:00', '2026-11-01'));
     });
+  });
+});
+
+describe('toCalendarDate', () => {
+  it('should return the day as seen in the given timezone, not in UTC', () => {
+    // 01:00 UTC on the 6th is still 22:00 on the 5th in São Paulo.
+    expect(toCalendarDate(new Date('2026-11-06T01:00:00.000Z'), SAO_PAULO)).toBe('2026-11-05');
+    expect(toCalendarDate(new Date('2026-11-06T01:00:00.000Z'), 'UTC')).toBe('2026-11-06');
   });
 });
 

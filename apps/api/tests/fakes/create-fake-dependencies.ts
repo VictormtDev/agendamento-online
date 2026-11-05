@@ -1,4 +1,5 @@
 import { AuthenticateUser } from '../../src/application/use-cases/authenticate-user.js';
+import { CreateAppointment } from '../../src/application/use-cases/create-appointment.js';
 import { CreateTimeOff } from '../../src/application/use-cases/create-time-off.js';
 import { CreateService } from '../../src/application/use-cases/create-service.js';
 import { DeleteService } from '../../src/application/use-cases/delete-service.js';
@@ -10,6 +11,7 @@ import { ReplaceAvailability } from '../../src/application/use-cases/replace-ava
 import { UpdateService } from '../../src/application/use-cases/update-service.js';
 import { UpdateUserTimezone } from '../../src/application/use-cases/update-user-timezone.js';
 import type { AppDependencies } from '../../src/infra/http/app.js';
+import { InMemoryAppointmentRepository } from '../in-memory/in-memory-appointment-repository.js';
 import { InMemoryAvailabilityRepository } from '../in-memory/in-memory-availability-repository.js';
 import { InMemoryServiceRepository } from '../in-memory/in-memory-service-repository.js';
 import { InMemoryTimeOffRepository } from '../in-memory/in-memory-time-off-repository.js';
@@ -24,6 +26,13 @@ export function createFakeDependencies(overrides: Partial<AppDependencies> = {})
   const availabilityRepository = new InMemoryAvailabilityRepository();
   const timeOffRepository = new InMemoryTimeOffRepository();
   const clock = new FakeClock();
+  const agendaRepositories = {
+    userRepository,
+    serviceRepository,
+    availabilityRepository,
+    timeOffRepository,
+    appointmentRepository: new InMemoryAppointmentRepository(),
+  };
   const passwordHasher = new FakePasswordHasher();
   const tokenService = new FakeTokenService();
 
@@ -40,13 +49,8 @@ export function createFakeDependencies(overrides: Partial<AppDependencies> = {})
     replaceAvailability: new ReplaceAvailability(availabilityRepository),
     createTimeOff: new CreateTimeOff(timeOffRepository, clock),
     deleteTimeOff: new DeleteTimeOff(timeOffRepository),
-    getAvailableSlots: new GetAvailableSlots(
-      userRepository,
-      serviceRepository,
-      availabilityRepository,
-      timeOffRepository,
-      clock,
-    ),
+    getAvailableSlots: new GetAvailableSlots(agendaRepositories, clock),
+    createAppointment: new CreateAppointment(agendaRepositories, clock),
     ...overrides,
   };
 }

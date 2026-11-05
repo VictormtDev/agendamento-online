@@ -3,6 +3,7 @@ import { z } from 'zod';
 import type { TokenService } from '../../application/ports/token-service.js';
 import type { AuthenticateUser } from '../../application/use-cases/authenticate-user.js';
 import type { CreateTimeOff } from '../../application/use-cases/create-time-off.js';
+import type { CreateAppointment } from '../../application/use-cases/create-appointment.js';
 import type { CreateService } from '../../application/use-cases/create-service.js';
 import type { DeleteService } from '../../application/use-cases/delete-service.js';
 import type { DeleteTimeOff } from '../../application/use-cases/delete-time-off.js';
@@ -17,6 +18,7 @@ import { createEnsureAuthenticated } from './middlewares/ensure-authenticated.js
 import { createEnsureRole } from './middlewares/ensure-role.js';
 import { errorHandler } from './middlewares/error-handler.js';
 import { notFound } from './middlewares/not-found.js';
+import { createAppointmentRouter } from './routes/appointment-routes.js';
 import { createAuthRouter } from './routes/auth-routes.js';
 import { createAvailabilityRouter } from './routes/availability-routes.js';
 import { createHealthRouter } from './routes/health-routes.js';
@@ -42,6 +44,7 @@ export interface AppDependencies {
   createTimeOff: CreateTimeOff;
   deleteTimeOff: DeleteTimeOff;
   getAvailableSlots: GetAvailableSlots;
+  createAppointment: CreateAppointment;
 }
 
 // Building the app separately from listening lets tests drive it with Supertest
@@ -63,6 +66,7 @@ export function createApp(dependencies: AppDependencies): Express {
   app.use('/api/v1', createAvailabilityRouter(dependencies.replaceAvailability, providerOnly));
   app.use('/api/v1', createTimeOffRouter(dependencies, providerOnly));
   app.use('/api/v1', createProviderRouter(dependencies.getAvailableSlots));
+  app.use('/api/v1', createAppointmentRouter(dependencies.createAppointment, ensureAuthenticated));
 
   app.use(notFound);
   app.use(errorHandler);

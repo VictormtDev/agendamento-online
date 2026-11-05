@@ -1,0 +1,13 @@
+import type { Appointment } from '../../domain/entities/appointment.js';
+import type { TimeInterval } from '../../domain/services/calculate-available-slots.js';
+
+export type CreateAppointmentData = Pick<
+  Appointment,
+  'providerId' | 'clientId' | 'serviceId' | 'startsAt' | 'endsAt'
+>;
+
+export interface AppointmentRepository {
+  /** SCHEDULED appointments of the provider that intersect the interval; touching does not count. */
+  findScheduledOverlapping(providerId: string, interval: TimeInterval): Promise<Appointment[]>;
+  create(data: CreateAppointmentData): Promise<Appointment>;
+}

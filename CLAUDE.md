@@ -260,7 +260,7 @@ Seguir em ordem. Marcar `[x]` ao concluir cada item.
 **Fase 3 — Agendamento (núcleo do projeto)**
 
 - [x] Cálculo de slots disponíveis (serviço de domínio + testes extensivos)
-- [ ] Criar agendamento com todas as regras
+- [x] Criar agendamento com todas as regras
 - [ ] Exclusion constraint + teste de concorrência
 - [ ] Cancelamento com regra de 24h
 - [ ] Listagens do cliente e do provider

@@ -13,28 +13,57 @@ enum Role {
 }
 
 model User {
-  id           String         @id @default(uuid(7)) @db.Uuid
-  name         String
-  email        String         @unique
-  passwordHash String
-  role         Role           @default(CLIENT)
+  id                   String         @id @default(uuid(7)) @db.Uuid
+  name                 String
+  email                String         @unique
+  passwordHash         String
+  role                 Role           @default(CLIENT)
   // Same value as DEFAULT_TIMEZONE in the domain; needed here to backfill existing rows.
-  timezone     String         @default("America/Sao_Paulo")
-  createdAt    DateTime       @default(now()) @db.Timestamptz(3)
-  services     Service[]
-  availability Availability[]
-  timeOffs     TimeOff[]
+  timezone             String         @default("America/Sao_Paulo")
+  createdAt            DateTime       @default(now()) @db.Timestamptz(3)
+  services             Service[]
+  availability         Availability[]
+  timeOffs             TimeOff[]
+  // A user appears on two sides of an appointment, so each side needs a named relation.
+  providerAppointments Appointment[]  @relation("ProviderAppointments")
+  clientAppointments   Appointment[]  @relation("ClientAppointments")
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  CANCELED
+  COMPLETED
+  NO_SHOW
+}
+
+model Appointment {
+  id         String            @id @default(uuid(7)) @db.Uuid
+  providerId String            @db.Uuid
+  provider   User              @relation("ProviderAppointments", fields: [providerId], references: [id], onDelete: Restrict)
+  clientId   String            @db.Uuid
+  client     User              @relation("ClientAppointments", fields: [clientId], references: [id], onDelete: Restrict)
+  serviceId  String            @db.Uuid
+  service    Service           @relation(fields: [serviceId], references: [id], onDelete: Restrict)
+  startsAt   DateTime          @db.Timestamptz(3)
+  endsAt     DateTime          @db.Timestamptz(3)
+  status     AppointmentStatus @default(SCHEDULED)
+  canceledAt DateTime?         @db.Timestamptz(3)
+  createdAt  DateTime          @default(now()) @db.Timestamptz(3)
+
+  @@index([providerId, startsAt])
+  @@index([clientId, startsAt])
 }
 
 model Service {
-  id              String   @id @default(uuid(7)) @db.Uuid
-  providerId      String   @db.Uuid
-  provider        User     @relation(fields: [providerId], references: [id], onDelete: Restrict)
+  id              String        @id @default(uuid(7)) @db.Uuid
+  providerId      String        @db.Uuid
+  provider        User          @relation(fields: [providerId], references: [id], onDelete: Restrict)
   name            String
   durationMinutes Int
   priceCents      Int
-  active          Boolean  @default(true)
-  createdAt       DateTime @default(now()) @db.Timestamptz(3)
+  active          Boolean       @default(true)
+  createdAt       DateTime      @default(now()) @db.Timestamptz(3)
+  appointments    Appointment[]
 
   @@index([providerId])
 }
