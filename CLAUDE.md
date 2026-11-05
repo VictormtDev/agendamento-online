@@ -227,6 +227,7 @@ npm run test -w apps/web             # só frontend
 npm run lint && npm run typecheck
 npx prisma migrate dev -w apps/api   # nova migration
 npx prisma studio -w apps/api
+npx prisma db seed -w apps/api       # recria os dados de demonstração (senha demo12345)
 ```
 
 (Ajustar esta seção se os scripts mudarem.)
@@ -276,7 +277,7 @@ Seguir em ordem. Marcar `[x]` ao concluir cada item.
 **Fase 5 — Acabamento de portfólio**
 
 - [x] Swagger completo em `/docs`
-- [ ] Seed com dados de demonstração e usuários de teste
+- [x] Seed com dados de demonstração e usuários de teste
 - [ ] Deploy (API + banco + front) com link público
 - [ ] README com: problema, prints/GIF, arquitetura, decisões técnicas, como rodar, próximos passos
 
