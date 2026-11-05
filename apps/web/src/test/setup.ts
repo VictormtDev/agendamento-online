@@ -6,4 +6,5 @@ import { afterEach } from 'vitest';
 // describe/it explicitly, so the DOM must be reset by hand between tests.
 afterEach(() => {
   cleanup();
+  localStorage.clear();
 });
