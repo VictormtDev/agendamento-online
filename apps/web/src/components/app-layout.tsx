@@ -27,6 +27,9 @@ export function AppLayout() {
                 <NavLink to="/dashboard/services" className={navLinkClass}>
                   Serviços
                 </NavLink>
+                <NavLink to="/dashboard/availability" className={navLinkClass}>
+                  Horários
+                </NavLink>
               </>
             )}
             <NavLink to="/providers" className={navLinkClass}>
