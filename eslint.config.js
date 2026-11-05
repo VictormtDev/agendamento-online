@@ -69,5 +69,14 @@ export default defineConfig(
     extends: [tseslint.configs.disableTypeChecked],
   },
   ...layerBoundaries,
+  {
+    // Supertest response bodies are untyped by nature; in tests the assertions
+    // themselves validate their shape, so these rules would only add casts.
+    files: ['**/tests/**/*.ts', '**/*.test.ts', '**/*.test.tsx'],
+    rules: {
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+    },
+  },
   prettierConfig,
 );

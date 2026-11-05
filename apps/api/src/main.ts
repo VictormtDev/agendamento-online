@@ -1,12 +1,9 @@
 import { env } from './config/env.js';
+import { createAppDependencies } from './infra/container.js';
 import { prisma } from './infra/database/prisma-client.js';
 import { createApp } from './infra/http/app.js';
 
-const app = createApp({
-  checkDatabase: async () => {
-    await prisma.$queryRaw`SELECT 1`;
-  },
-});
+const app = createApp(createAppDependencies(prisma, env));
 
 const server = app.listen(env.PORT, () => {
   console.log(`API listening on http://localhost:${String(env.PORT)}`);

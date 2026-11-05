@@ -1,41 +1,49 @@
 import { describe, expect, it } from 'vitest';
 import { InvalidEnvError, parseEnv } from '../../../src/config/env-schema.js';
 
-const VALID_DATABASE_URL = 'postgresql://user:pass@localhost:5432/db';
+const REQUIRED = {
+  DATABASE_URL: 'postgresql://user:pass@localhost:5432/db',
+  JWT_SECRET: 'a'.repeat(32),
+};
 
 describe('parseEnv', () => {
-  it('should apply defaults when only DATABASE_URL is provided', () => {
-    expect(parseEnv({ DATABASE_URL: VALID_DATABASE_URL })).toEqual({
+  it('should apply defaults when only required variables are provided', () => {
+    expect(parseEnv(REQUIRED)).toEqual({
+      ...REQUIRED,
       NODE_ENV: 'development',
       PORT: 3333,
-      DATABASE_URL: VALID_DATABASE_URL,
+      JWT_EXPIRES_IN: '1h',
     });
   });
 
   it('should coerce PORT from string to number', () => {
-    const env = parseEnv({ DATABASE_URL: VALID_DATABASE_URL, PORT: '8080' });
-
-    expect(env.PORT).toBe(8080);
+    expect(parseEnv({ ...REQUIRED, PORT: '8080' }).PORT).toBe(8080);
   });
 
   it('should reject a missing DATABASE_URL', () => {
-    expect(() => parseEnv({})).toThrow(InvalidEnvError);
+    expect(() => parseEnv({ JWT_SECRET: REQUIRED.JWT_SECRET })).toThrow(InvalidEnvError);
   });
 
   it('should reject a DATABASE_URL that is not PostgreSQL', () => {
-    expect(() => parseEnv({ DATABASE_URL: 'mysql://user:pass@localhost:3306/db' })).toThrow(
+    expect(() => parseEnv({ ...REQUIRED, DATABASE_URL: 'mysql://user:pass@localhost/db' })).toThrow(
       /DATABASE_URL/,
     );
   });
 
   it('should reject a non-numeric PORT', () => {
-    expect(() => parseEnv({ DATABASE_URL: VALID_DATABASE_URL, PORT: 'abc' })).toThrow(/PORT/);
+    expect(() => parseEnv({ ...REQUIRED, PORT: 'abc' })).toThrow(/PORT/);
   });
 
   it('should reject an unknown NODE_ENV', () => {
-    expect(() => parseEnv({ DATABASE_URL: VALID_DATABASE_URL, NODE_ENV: 'staging' })).toThrow(
-      /NODE_ENV/,
-    );
+    expect(() => parseEnv({ ...REQUIRED, NODE_ENV: 'staging' })).toThrow(/NODE_ENV/);
+  });
+
+  it('should reject a JWT_SECRET shorter than 32 characters', () => {
+    expect(() => parseEnv({ ...REQUIRED, JWT_SECRET: 'short' })).toThrow(/JWT_SECRET/);
+  });
+
+  it.each(['1 hour', '60', 'h1'])('should reject an invalid JWT_EXPIRES_IN (%s)', (value) => {
+    expect(() => parseEnv({ ...REQUIRED, JWT_EXPIRES_IN: value })).toThrow(/JWT_EXPIRES_IN/);
   });
 
   it('should report every invalid variable at once', () => {

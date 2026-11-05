@@ -247,7 +247,7 @@ Seguir em ordem. Marcar `[x]` ao concluir cada item.
 
 **Fase 1 — Auth**
 
-- [ ] Register / login / `GET /me`, roles CLIENT e PROVIDER
+- [x] Register / login / `GET /me`, roles CLIENT e PROVIDER
 - [ ] Middleware de auth e de autorização por role
 
 **Fase 2 — Área do provider**
