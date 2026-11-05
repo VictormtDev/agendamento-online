@@ -10,6 +10,10 @@ import type { TimeInterval } from '../../src/domain/services/calculate-available
 export class InMemoryAppointmentRepository implements AppointmentRepository {
   readonly items: Appointment[] = [];
 
+  findById(id: string): Promise<Appointment | null> {
+    return Promise.resolve(this.items.find((item) => item.id === id) ?? null);
+  }
+
   findScheduledOverlapping(providerId: string, interval: TimeInterval): Promise<Appointment[]> {
     return Promise.resolve(
       this.items.filter(
@@ -42,6 +46,16 @@ export class InMemoryAppointmentRepository implements AppointmentRepository {
       ...data,
     };
     this.items.push(appointment);
+    return Promise.resolve(appointment);
+  }
+
+  cancel(id: string, canceledAt: Date): Promise<Appointment> {
+    const appointment = this.items.find((item) => item.id === id);
+    if (!appointment) {
+      return Promise.reject(new Error(`Appointment ${id} not found`));
+    }
+    appointment.status = 'CANCELED';
+    appointment.canceledAt = canceledAt;
     return Promise.resolve(appointment);
   }
 }

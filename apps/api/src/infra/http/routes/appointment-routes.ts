@@ -1,17 +1,32 @@
 import { Router, type RequestHandler } from 'express';
+import type { CancelAppointment } from '../../../application/use-cases/cancel-appointment.js';
 import type { CreateAppointment } from '../../../application/use-cases/create-appointment.js';
-import { createCreateAppointmentController } from '../controllers/appointment-controller.js';
+import {
+  createCancelAppointmentController,
+  createCreateAppointmentController,
+} from '../controllers/appointment-controller.js';
 
-// Any authenticated user may book, providers included (with someone else, never themselves).
+interface AppointmentUseCases {
+  createAppointment: CreateAppointment;
+  cancelAppointment: CancelAppointment;
+}
+
+// Any authenticated user may book, providers included (with someone else, never
+// themselves). Who may cancel is decided per appointment in the use case.
 export function createAppointmentRouter(
-  createAppointment: CreateAppointment,
+  useCases: AppointmentUseCases,
   ensureAuthenticated: RequestHandler,
 ): Router {
   const router = Router();
   router.post(
     '/appointments',
     ensureAuthenticated,
-    createCreateAppointmentController(createAppointment),
+    createCreateAppointmentController(useCases.createAppointment),
+  );
+  router.patch(
+    '/appointments/:id/cancel',
+    ensureAuthenticated,
+    createCancelAppointmentController(useCases.cancelAppointment),
   );
   return router;
 }

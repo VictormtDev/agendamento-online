@@ -1,4 +1,5 @@
 import { AuthenticateUser } from '../application/use-cases/authenticate-user.js';
+import { CancelAppointment } from '../application/use-cases/cancel-appointment.js';
 import { CreateAppointment } from '../application/use-cases/create-appointment.js';
 import { CreateTimeOff } from '../application/use-cases/create-time-off.js';
 import { CreateService } from '../application/use-cases/create-service.js';
@@ -57,5 +58,6 @@ export function createAppDependencies(prisma: PrismaClient, env: Env): AppDepend
     deleteTimeOff: new DeleteTimeOff(timeOffRepository),
     getAvailableSlots: new GetAvailableSlots(agendaRepositories, clock),
     createAppointment: new CreateAppointment(agendaRepositories, clock),
+    cancelAppointment: new CancelAppointment(agendaRepositories.appointmentRepository, clock),
   };
 }

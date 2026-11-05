@@ -9,3 +9,6 @@ export const MIN_BOOKING_NOTICE_HOURS = 2;
 
 /** Bookings can start at most this far ahead of "now". */
 export const MAX_BOOKING_WINDOW_DAYS = 60;
+
+/** Clients can cancel up to this long before the start; providers have no such limit. */
+export const CLIENT_CANCELLATION_NOTICE_HOURS = 24;

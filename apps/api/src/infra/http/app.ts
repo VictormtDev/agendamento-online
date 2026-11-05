@@ -3,6 +3,7 @@ import { z } from 'zod';
 import type { TokenService } from '../../application/ports/token-service.js';
 import type { AuthenticateUser } from '../../application/use-cases/authenticate-user.js';
 import type { CreateTimeOff } from '../../application/use-cases/create-time-off.js';
+import type { CancelAppointment } from '../../application/use-cases/cancel-appointment.js';
 import type { CreateAppointment } from '../../application/use-cases/create-appointment.js';
 import type { CreateService } from '../../application/use-cases/create-service.js';
 import type { DeleteService } from '../../application/use-cases/delete-service.js';
@@ -45,6 +46,7 @@ export interface AppDependencies {
   deleteTimeOff: DeleteTimeOff;
   getAvailableSlots: GetAvailableSlots;
   createAppointment: CreateAppointment;
+  cancelAppointment: CancelAppointment;
 }
 
 // Building the app separately from listening lets tests drive it with Supertest
@@ -66,7 +68,7 @@ export function createApp(dependencies: AppDependencies): Express {
   app.use('/api/v1', createAvailabilityRouter(dependencies.replaceAvailability, providerOnly));
   app.use('/api/v1', createTimeOffRouter(dependencies, providerOnly));
   app.use('/api/v1', createProviderRouter(dependencies.getAvailableSlots));
-  app.use('/api/v1', createAppointmentRouter(dependencies.createAppointment, ensureAuthenticated));
+  app.use('/api/v1', createAppointmentRouter(dependencies, ensureAuthenticated));
 
   app.use(notFound);
   app.use(errorHandler);

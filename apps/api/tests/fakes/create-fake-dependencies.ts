@@ -1,4 +1,5 @@
 import { AuthenticateUser } from '../../src/application/use-cases/authenticate-user.js';
+import { CancelAppointment } from '../../src/application/use-cases/cancel-appointment.js';
 import { CreateAppointment } from '../../src/application/use-cases/create-appointment.js';
 import { CreateTimeOff } from '../../src/application/use-cases/create-time-off.js';
 import { CreateService } from '../../src/application/use-cases/create-service.js';
@@ -51,6 +52,7 @@ export function createFakeDependencies(overrides: Partial<AppDependencies> = {})
     deleteTimeOff: new DeleteTimeOff(timeOffRepository),
     getAvailableSlots: new GetAvailableSlots(agendaRepositories, clock),
     createAppointment: new CreateAppointment(agendaRepositories, clock),
+    cancelAppointment: new CancelAppointment(agendaRepositories.appointmentRepository, clock),
     ...overrides,
   };
 }

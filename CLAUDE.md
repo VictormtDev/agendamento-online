@@ -262,7 +262,7 @@ Seguir em ordem. Marcar `[x]` ao concluir cada item.
 - [x] Cálculo de slots disponíveis (serviço de domínio + testes extensivos)
 - [x] Criar agendamento com todas as regras
 - [x] Exclusion constraint + teste de concorrência
-- [ ] Cancelamento com regra de 24h
+- [x] Cancelamento com regra de 24h
 - [ ] Listagens do cliente e do provider
 
 **Fase 4 — Frontend**

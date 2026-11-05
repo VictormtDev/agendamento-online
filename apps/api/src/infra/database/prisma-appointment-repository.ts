@@ -32,6 +32,10 @@ function isOverlapViolation(error: unknown): boolean {
 export class PrismaAppointmentRepository implements AppointmentRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
+  findById(id: string): Promise<Appointment | null> {
+    return this.prisma.appointment.findUnique({ where: { id } });
+  }
+
   findScheduledOverlapping(providerId: string, interval: TimeInterval): Promise<Appointment[]> {
     return this.prisma.appointment.findMany({
       where: {
@@ -54,5 +58,12 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
       }
       throw error;
     }
+  }
+
+  cancel(id: string, canceledAt: Date): Promise<Appointment> {
+    return this.prisma.appointment.update({
+      where: { id },
+      data: { status: 'CANCELED', canceledAt },
+    });
   }
 }
