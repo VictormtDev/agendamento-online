@@ -36,11 +36,11 @@ export function LoginForm() {
         {...register('password')}
       />
       {login.error && (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="text-sm text-ruby-700">
           {login.error.message}
         </p>
       )}
-      <Button type="submit" disabled={login.isPending}>
+      <Button type="submit" className="mt-2 w-full" disabled={login.isPending}>
         {login.isPending ? 'Entrando...' : 'Entrar'}
       </Button>
     </form>

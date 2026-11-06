@@ -1,7 +1,10 @@
+import { Check, Plus, X } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useReplaceAvailability, type AvailabilityWindow } from '../../api/schedule';
 import { Button } from '../../components/ui/button';
+import { CARD_CLASSES } from '../../components/ui/card';
 import { FormError } from '../../components/ui/form-error';
+import { COMPACT_INPUT_CLASSES } from '../../components/ui/text-field';
 
 // Monday first, as Brazilian calendars do; the API numbers days from Sunday (0).
 const WEEKDAYS = [
@@ -56,23 +59,24 @@ export function AvailabilityEditor({ initial }: { initial: AvailabilityWindow[] 
           <section
             key={weekday}
             aria-label={label}
-            className="flex flex-col gap-2 rounded-lg bg-white p-3 shadow"
+            className={`${CARD_CLASSES} flex flex-col gap-3 p-4`}
           >
-            <div className="flex items-center justify-between">
-              <h3 className="font-medium text-slate-900">{label}</h3>
-              <button
-                type="button"
-                className="text-sm text-slate-700 underline"
+            <div className="flex items-center justify-between gap-2">
+              <h3 className="font-semibold text-ink">{label}</h3>
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => {
                   add(weekday);
                 }}
               >
+                <Plus aria-hidden="true" className="size-4" />
                 Adicionar horário
-              </button>
+              </Button>
             </div>
-            {dayWindows.length === 0 && <p className="text-sm text-slate-500">Sem atendimento.</p>}
+            {dayWindows.length === 0 && <p className="text-sm text-muted">Sem atendimento.</p>}
             {dayWindows.map((window) => (
-              <div key={window.key} className="flex items-center gap-2">
+              <div key={window.key} className="flex flex-wrap items-center gap-2">
                 <input
                   type="time"
                   aria-label="Início"
@@ -81,9 +85,9 @@ export function AvailabilityEditor({ initial }: { initial: AvailabilityWindow[] 
                   onChange={(event) => {
                     change(window.key, { startTime: event.target.value });
                   }}
-                  className="rounded-md border border-slate-300 px-2 py-1"
+                  className={`${COMPACT_INPUT_CLASSES} tabular-nums`}
                 />
-                <span className="text-slate-600">até</span>
+                <span className="text-sm text-muted">até</span>
                 <input
                   type="time"
                   aria-label="Fim"
@@ -92,17 +96,18 @@ export function AvailabilityEditor({ initial }: { initial: AvailabilityWindow[] 
                   onChange={(event) => {
                     change(window.key, { endTime: event.target.value });
                   }}
-                  className="rounded-md border border-slate-300 px-2 py-1"
+                  className={`${COMPACT_INPUT_CLASSES} tabular-nums`}
                 />
-                <button
-                  type="button"
-                  className="text-sm text-red-700 underline"
+                <Button
+                  variant="danger-ghost"
+                  size="sm"
                   onClick={() => {
                     remove(window.key);
                   }}
                 >
+                  <X aria-hidden="true" className="size-4" />
                   Remover horário
-                </button>
+                </Button>
               </div>
             ))}
           </section>
@@ -111,7 +116,11 @@ export function AvailabilityEditor({ initial }: { initial: AvailabilityWindow[] 
 
       <FormError error={replaceAvailability.error} />
       {replaceAvailability.isSuccess && (
-        <p role="status" className="text-sm text-green-700">
+        <p
+          role="status"
+          className="flex items-center gap-1.5 text-sm font-medium text-eucalyptus-700"
+        >
+          <Check aria-hidden="true" className="size-4" />
           Grade salva.
         </p>
       )}

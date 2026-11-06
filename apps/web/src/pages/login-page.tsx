@@ -6,9 +6,12 @@ export function LoginPage() {
   return (
     <AuthLayout title="Entrar">
       <LoginForm />
-      <p className="mt-4 text-center text-sm text-slate-600">
+      <p className="mt-6 text-center text-sm text-muted">
         Ainda não tem conta?{' '}
-        <Link to="/register" className="font-medium text-slate-900 underline">
+        <Link
+          to="/register"
+          className="font-medium text-eucalyptus-700 underline-offset-4 hover:underline"
+        >
           Cadastre-se
         </Link>
       </p>

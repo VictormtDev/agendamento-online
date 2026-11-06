@@ -1,9 +1,20 @@
+import {
+  CalendarDays,
+  CircleCheck,
+  Clock,
+  Scissors,
+  TriangleAlert,
+  UserRound,
+  Wallet,
+  type LucideIcon,
+} from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { useCreateAppointment, type Appointment, type Slot } from '../../api/booking';
 import { ApiError } from '../../api/http-client';
 import type { ProviderProfile, ServiceSummary } from '../../api/providers';
 import { Button } from '../../components/ui/button';
+import { CARD_CLASSES } from '../../components/ui/card';
 import { formatDateTime, formatDuration, formatPrice, todayIn } from '../../lib/format';
 import { SlotPicker } from './slot-picker';
 
@@ -40,26 +51,31 @@ export function BookingFlow({ provider, service }: BookingFlowProps) {
   };
 
   const summary = (startsAt: string) => (
-    <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-slate-700">
-      <dt className="font-medium">Profissional</dt>
-      <dd>{provider.name}</dd>
-      <dt className="font-medium">Serviço</dt>
-      <dd>{service.name}</dd>
-      <dt className="font-medium">Quando</dt>
-      <dd>{formatDateTime(startsAt, provider.timezone)}</dd>
-      <dt className="font-medium">Duração</dt>
-      <dd>{formatDuration(service.durationMinutes)}</dd>
-      <dt className="font-medium">Preço</dt>
-      <dd>{formatPrice(service.priceCents)}</dd>
+    <dl className="flex flex-col gap-3">
+      <SummaryRow icon={UserRound} term="Profissional" value={provider.name} />
+      <SummaryRow icon={Scissors} term="Serviço" value={service.name} />
+      <SummaryRow
+        icon={CalendarDays}
+        term="Quando"
+        value={formatDateTime(startsAt, provider.timezone)}
+      />
+      <SummaryRow icon={Clock} term="Duração" value={formatDuration(service.durationMinutes)} />
+      <SummaryRow icon={Wallet} term="Preço" value={formatPrice(service.priceCents)} />
     </dl>
   );
 
   if (booked) {
     return (
-      <div className="flex flex-col gap-4 rounded-lg bg-white p-6 shadow">
-        <h2 className="text-xl font-semibold text-green-700">Agendamento confirmado!</h2>
+      <div className={`${CARD_CLASSES} flex flex-col gap-6 p-6 shadow-lift sm:p-8`}>
+        <div className="flex items-center gap-3">
+          <CircleCheck aria-hidden="true" className="size-8 text-eucalyptus-700" />
+          <h2 className="text-2xl font-bold text-eucalyptus-800">Agendamento confirmado!</h2>
+        </div>
         {summary(booked.startsAt)}
-        <Link to="/appointments" className="text-sm text-slate-600 underline">
+        <Link
+          to="/appointments"
+          className="w-fit text-sm font-medium text-eucalyptus-700 underline-offset-4 hover:underline"
+        >
           Ver meus agendamentos
         </Link>
       </div>
@@ -68,15 +84,15 @@ export function BookingFlow({ provider, service }: BookingFlowProps) {
 
   if (selectedSlot) {
     return (
-      <div className="flex flex-col gap-4 rounded-lg bg-white p-6 shadow">
-        <h2 className="text-xl font-semibold text-slate-900">Confirme o agendamento</h2>
+      <div className={`${CARD_CLASSES} flex flex-col gap-6 p-6 shadow-lift sm:p-8`}>
+        <h2 className="text-2xl font-bold text-ink">Confirme o agendamento</h2>
         {summary(selectedSlot.startsAt)}
         {createAppointment.error && (
-          <p role="alert" className="text-sm text-red-600">
+          <p role="alert" className="text-sm text-ruby-700">
             {createAppointment.error.message}
           </p>
         )}
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button
             disabled={createAppointment.isPending}
             onClick={() => {
@@ -85,16 +101,16 @@ export function BookingFlow({ provider, service }: BookingFlowProps) {
           >
             {createAppointment.isPending ? 'Confirmando...' : 'Confirmar agendamento'}
           </Button>
-          <button
+          <Button
             type="button"
-            className="px-4 py-2 text-slate-700 underline"
+            variant="ghost"
             onClick={() => {
               createAppointment.reset();
               setSelectedSlot(null);
             }}
           >
             Escolher outro horário
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -103,7 +119,11 @@ export function BookingFlow({ provider, service }: BookingFlowProps) {
   return (
     <div className="flex flex-col gap-4">
       {notice && (
-        <p role="alert" className="text-sm text-red-600">
+        <p
+          role="alert"
+          className="flex items-center gap-2 rounded-xl bg-saffron-50 p-3 text-sm font-medium text-saffron-700"
+        >
+          <TriangleAlert aria-hidden="true" className="size-4 shrink-0" />
           {notice}
         </p>
       )}
@@ -123,6 +143,24 @@ export function BookingFlow({ provider, service }: BookingFlowProps) {
           setSelectedSlot(slot);
         }}
       />
+    </div>
+  );
+}
+
+interface SummaryRowProps {
+  icon: LucideIcon;
+  term: string;
+  value: string;
+}
+
+function SummaryRow({ icon: Icon, term, value }: SummaryRowProps) {
+  return (
+    <div className="flex items-start gap-3">
+      <Icon aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-eucalyptus-600" />
+      <div className="flex flex-col">
+        <dt className="text-xs font-medium text-muted">{term}</dt>
+        <dd className="text-ink">{value}</dd>
+      </div>
     </div>
   );
 }

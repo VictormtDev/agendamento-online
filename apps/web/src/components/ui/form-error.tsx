@@ -9,7 +9,7 @@ export function FormError({ error }: { error: Error | null }) {
   const reasons = error instanceof ApiError ? [...new Set(error.issues.map((i) => i.message))] : [];
 
   return (
-    <div role="alert" className="text-sm text-red-600">
+    <div role="alert" className="text-sm text-ruby-700">
       <p>{error.message}</p>
       {reasons.length > 0 && (
         <ul className="list-inside list-disc">
