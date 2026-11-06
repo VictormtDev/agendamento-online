@@ -37,16 +37,16 @@ O app funciona, mas o visual é o Tailwind padrão: tudo `slate`, um único bot�
 
 ### Tokens (`@theme`)
 
-| Token                  | Valor     | Uso                                               |
-| ---------------------- | --------- | ------------------------------------------------- |
-| `--color-eucalyptus-*` | escala 50–900, base 700 `#1F5C55` | primária: botões, links, seleção |
-| `--color-saffron-*`    | escala, base 400 `#E3A72F` | toque quente: "hoje", status agendado  |
-| `--color-linen`        | `#F6F7F4` | fundo da página                                   |
-| `--color-ink`          | `#1C2321` | texto principal                                   |
-| `--color-ruby-*`       | escala, base 600 `#B4363F` | perigo, cancelado, erros               |
-| `--font-display`       | Bricolage Grotesque | títulos e logotipo                      |
-| `--font-sans`          | Figtree   | texto e interface                                 |
-| raios                  | pílula em botões e chips; `1rem` em cards; `0.75rem` em inputs |
+| Token                  | Valor                                                                                        | Uso                                   |
+| ---------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------- |
+| `--color-eucalyptus-*` | escala 50–900, base 700 `#1F5C55`                                                            | primária: botões, links, seleção      |
+| `--color-saffron-*`    | escala, base 400 `#E3A72F`                                                                   | toque quente: "hoje", status agendado |
+| `--color-linen`        | `#F6F7F4`                                                                                    | fundo da página                       |
+| `--color-ink`          | `#1C2321`                                                                                    | texto principal                       |
+| `--color-ruby-*`       | escala, base 600 `#B4363F`                                                                   | perigo, cancelado, erros              |
+| `--font-display`       | Bricolage Grotesque                                                                          | títulos e logotipo                    |
+| `--font-sans`          | Figtree                                                                                      | texto e interface                     |
+| raios                  | pílula em botões e chips; `1rem` em cards; `0.75rem` em inputs                               |
 | sombras                | quase nenhuma: os cards usam borda de 1px; sombra só no menu mobile e no card de confirmação |
 
 Os tons intermediários das escalas são escolha do implementador, com contraste mínimo AA para texto.
@@ -66,6 +66,7 @@ Direção visual: **Eucalipto** (escolhida) em vez de **Ameixa**, porque Ameixa 
 ## Etapas (uma por commit)
 
 **a) Design system:** tema no `index.css`, fontes no `index.html` e `<title>Encaixe</title>`. Componentes em `components/ui`:
+
 - `Button`: variantes `primary`, `secondary`, `ghost` e `danger`, além de tamanhos.
 - `Card`.
 - `Badge` de status: ícone + texto, com cor por status, reaproveitando os textos de `STATUS_LABELS`.
@@ -82,6 +83,7 @@ Os componentes existentes (`FormError`, `Pagination`, `QueryState`) passam a usa
 **d) Profissionais:** lista com avatar, nome e a contagem de serviços ativos (`activeServiceCount`, já devolvida pela API). Não há bio, foto nem categoria, e nada disso será inventado. Página do profissional com cabeçalho (avatar grande) e serviços como cards com duração, preço e o link "Agendar {serviço}".
 
 **e) Agendamento:**
+
 - Uma faixa de 7 dias, começando no "hoje" do fuso do provider. Cada dia é um botão com o dia da semana abreviado e o número grande, além de `aria-pressed` e um nome acessível por extenso.
 - Setas para a semana anterior e a próxima. A anterior fica desabilitada na semana de hoje, o que substitui o `min` do input. Não há limite superior no front: além da janela, a API já devolve lista vazia, e a tela mostra "Nenhum horário disponível nesta data."
 - O grupo mantém o nome acessível "Data".
