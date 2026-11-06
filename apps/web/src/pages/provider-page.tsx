@@ -1,5 +1,10 @@
+import { Clock } from 'lucide-react';
 import { Link, useParams } from 'react-router';
 import { useProviderProfile } from '../api/providers';
+import { Avatar } from '../components/ui/avatar';
+import { BackLink } from '../components/ui/back-link';
+import { buttonClasses } from '../components/ui/button';
+import { CARD_CLASSES } from '../components/ui/card';
 import { ErrorMessage, LoadingMessage } from '../components/ui/query-state';
 import { formatDuration, formatPrice } from '../lib/format';
 
@@ -8,39 +13,43 @@ export function ProviderPage() {
   const profile = useProviderProfile(id);
 
   return (
-    <section className="flex flex-col gap-4">
-      <Link to="/providers" className="text-sm text-slate-600 underline">
-        ← Voltar para profissionais
-      </Link>
+    <section className="flex flex-col gap-6">
+      <BackLink to="/providers">Voltar para profissionais</BackLink>
       {profile.isPending && <LoadingMessage />}
       {profile.isError && <ErrorMessage error={profile.error} />}
       {profile.isSuccess && (
         <>
-          <h1 className="text-2xl font-semibold text-slate-900">{profile.data.provider.name}</h1>
-          <h2 className="text-lg font-medium text-slate-900">Serviços</h2>
+          <header className="flex items-center gap-4">
+            <Avatar name={profile.data.provider.name} size="lg" />
+            <h1 className="text-3xl font-bold text-ink">{profile.data.provider.name}</h1>
+          </header>
+          <h2 className="text-xl font-semibold text-ink">Serviços</h2>
           {profile.data.services.length === 0 ? (
-            <p className="text-slate-600">Este profissional não tem serviços disponíveis.</p>
+            <p className="text-muted">Este profissional não tem serviços disponíveis.</p>
           ) : (
-            <ul className="flex flex-col gap-2">
+            <ul className="grid gap-3 sm:grid-cols-2">
               {profile.data.services.map((service) => (
                 <li
                   key={service.id}
-                  className="flex items-center justify-between rounded-lg bg-white p-4 shadow"
+                  className={`${CARD_CLASSES} flex items-center justify-between gap-4 p-5`}
                 >
-                  <div>
-                    <span className="block font-medium text-slate-900">{service.name}</span>
-                    <span className="text-sm text-slate-600">
+                  <div className="flex flex-col gap-1">
+                    <span className="font-display text-lg font-semibold text-ink">
+                      {service.name}
+                    </span>
+                    <span className="flex items-center gap-1.5 text-sm text-muted">
+                      <Clock aria-hidden="true" className="size-3.5" />
                       {formatDuration(service.durationMinutes)}
                     </span>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <span className="font-medium text-slate-900">
+                  <div className="flex flex-col items-end gap-2">
+                    <span className="font-display text-lg font-semibold text-eucalyptus-800 tabular-nums">
                       {formatPrice(service.priceCents)}
                     </span>
                     <Link
                       to={`/providers/${profile.data.provider.id}/services/${service.id}/book`}
                       aria-label={`Agendar ${service.name}`}
-                      className="rounded-md bg-slate-900 px-4 py-2 font-medium text-white hover:bg-slate-700"
+                      className={buttonClasses('primary', 'sm')}
                     >
                       Agendar
                     </Link>
