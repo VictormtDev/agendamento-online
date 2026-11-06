@@ -43,7 +43,7 @@ export function AppointmentCard({ appointment, now }: AppointmentCardProps) {
         <span className="font-display text-lg font-semibold text-ink">{service.name}</span>
         <span className="flex items-center gap-2 text-sm text-muted">
           <Avatar name={provider.name} size="sm" />
-          com {provider.name}
+          <span>com {provider.name}</span>
         </span>
         <span className="text-sm text-muted">
           {formatDateTime(appointment.startsAt, provider.timezone)}

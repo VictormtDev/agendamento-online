@@ -1,10 +1,13 @@
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { useProviderAgenda, type ProviderAppointment } from '../api/appointments';
+import { Avatar } from '../components/ui/avatar';
 import { Button } from '../components/ui/button';
+import { CARD_CLASSES } from '../components/ui/card';
 import { ErrorMessage, LoadingMessage } from '../components/ui/query-state';
+import { StatusBadge } from '../components/ui/status-badge';
 import { CancelAppointmentButton } from '../features/appointments/cancel-appointment-button';
-import { STATUS_LABELS } from '../features/appointments/status-labels';
 import { useSignedInUser } from '../features/auth/auth-context';
 import {
   agendaRange,
@@ -38,10 +41,14 @@ export function ProviderAgendaPage() {
   const [now] = useState(() => new Date());
 
   return (
-    <section className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <h1 className="text-2xl font-semibold text-slate-900">Agenda</h1>
-        <div className="flex items-center gap-2" role="group" aria-label="Visualização">
+    <section className="flex flex-col gap-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-3xl font-bold text-ink">Agenda</h1>
+        <div
+          className="flex rounded-full border border-line bg-white p-1"
+          role="group"
+          aria-label="Visualização"
+        >
           {(['day', 'week'] as const).map((option) => (
             <button
               key={option}
@@ -50,7 +57,7 @@ export function ProviderAgendaPage() {
               onClick={() => {
                 update({ view: option });
               }}
-              className="rounded-md border border-slate-300 px-3 py-1 text-sm aria-pressed:bg-slate-900 aria-pressed:text-white"
+              className="rounded-full px-4 py-1.5 text-sm font-medium text-muted transition-colors aria-pressed:bg-eucalyptus-700 aria-pressed:text-white"
             >
               {option === 'day' ? 'Dia' : 'Semana'}
             </button>
@@ -58,30 +65,40 @@ export function ProviderAgendaPage() {
         </div>
       </div>
 
-      <nav aria-label="Navegar na agenda" className="flex items-center gap-2">
-        <Button
-          onClick={() => {
-            update({ date: shiftDate(view, date, timezone, -1) });
-          }}
-        >
-          {view === 'day' ? 'Dia anterior' : 'Semana anterior'}
-        </Button>
-        <Button
-          onClick={() => {
-            update({ date: todayIn(timezone) });
-          }}
-        >
-          Hoje
-        </Button>
-        <Button
-          onClick={() => {
-            update({ date: shiftDate(view, date, timezone, 1) });
-          }}
-        >
-          {view === 'day' ? 'Próximo dia' : 'Próxima semana'}
-        </Button>
-      </nav>
-      <p className="text-sm text-slate-600">Horários no fuso {timezone}.</p>
+      <div className="flex flex-col gap-2">
+        <nav aria-label="Navegar na agenda" className="flex flex-wrap items-center gap-2">
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => {
+              update({ date: shiftDate(view, date, timezone, -1) });
+            }}
+          >
+            <ChevronLeft aria-hidden="true" className="size-4" />
+            {view === 'day' ? 'Dia anterior' : 'Semana anterior'}
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              update({ date: todayIn(timezone) });
+            }}
+          >
+            Hoje
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => {
+              update({ date: shiftDate(view, date, timezone, 1) });
+            }}
+          >
+            {view === 'day' ? 'Próximo dia' : 'Próxima semana'}
+            <ChevronRight aria-hidden="true" className="size-4" />
+          </Button>
+        </nav>
+        <p className="text-sm text-muted">Horários no fuso {timezone}.</p>
+      </div>
 
       {agenda.isPending && <LoadingMessage />}
       {agenda.isError && <ErrorMessage error={agenda.error} />}
@@ -110,29 +127,42 @@ interface AgendaDayProps {
 
 function AgendaDay({ label, appointments, timezone, now }: AgendaDayProps) {
   return (
-    <section aria-label={label} className="flex flex-col gap-2">
-      <h2 className="font-medium capitalize text-slate-900">{label}</h2>
+    <section aria-label={label} className="flex flex-col gap-3">
+      <h2 className="text-lg font-semibold text-ink first-letter:uppercase">{label}</h2>
       {appointments.length === 0 ? (
-        <p className="text-sm text-slate-500">Nenhum agendamento.</p>
+        <p className="text-sm text-muted">Nenhum agendamento.</p>
       ) : (
-        <ul className="flex flex-col gap-2">
+        // A timeline: the rail and dots show the day's order at a glance.
+        <ol className="ml-2 flex flex-col gap-3 border-l-2 border-eucalyptus-200 pl-5">
           {appointments.map((appointment) => (
-            <li key={appointment.id} className="flex flex-col gap-1 rounded-lg bg-white p-3 shadow">
-              <div className="flex items-center justify-between gap-4">
-                <span className="font-medium text-slate-900">
+            <li
+              key={appointment.id}
+              className={`${CARD_CLASSES} relative flex flex-col gap-2 p-4 ${
+                appointment.status === 'CANCELED' ? 'opacity-70' : ''
+              }`}
+            >
+              <span
+                aria-hidden="true"
+                className="absolute top-5 -left-[1.95rem] size-3 rounded-full border-2 border-white bg-eucalyptus-700"
+              />
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="font-display font-semibold text-ink tabular-nums">
                   {formatTime(appointment.startsAt, timezone)}–
                   {formatTime(appointment.endsAt, timezone)} · {appointment.service.name}
                 </span>
-                <span className="text-sm text-slate-700">{STATUS_LABELS[appointment.status]}</span>
+                <StatusBadge status={appointment.status} />
               </div>
-              <span className="text-sm text-slate-600">{appointment.client.name}</span>
+              <span className="flex items-center gap-2 text-sm text-muted">
+                <Avatar name={appointment.client.name} size="sm" />
+                <span>{appointment.client.name}</span>
+              </span>
               {/* The provider may cancel at any time before the start. */}
               {appointment.status === 'SCHEDULED' && new Date(appointment.startsAt) > now && (
                 <CancelAppointmentButton appointmentId={appointment.id} />
               )}
             </li>
           ))}
-        </ul>
+        </ol>
       )}
     </section>
   );

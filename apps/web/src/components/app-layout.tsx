@@ -109,7 +109,7 @@ export function AppLayout() {
             <div className="mt-3 flex items-center justify-between border-t border-line pt-3">
               <span className="flex items-center gap-2 text-sm text-muted">
                 <Avatar name={user.name} size="sm" />
-                Olá, {user.name}
+                <span>Olá, {user.name}</span>
               </span>
               <Button variant="ghost" size="sm" onClick={signOut}>
                 <LogOut aria-hidden="true" className="size-4" />

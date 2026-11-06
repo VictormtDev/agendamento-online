@@ -3,7 +3,8 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import type { ServiceInput } from '../../api/services';
 import { Button } from '../../components/ui/button';
-import { TextField } from '../../components/ui/text-field';
+import { CARD_CLASSES } from '../../components/ui/card';
+import { INPUT_CLASSES, TextField } from '../../components/ui/text-field';
 import { formatDuration } from '../../lib/format';
 
 // Mirrors the API rules: a multiple of the 15-minute slot, up to 8 hours.
@@ -73,32 +74,34 @@ export function ServiceForm({
     <form
       onSubmit={(event) => void submit(event)}
       noValidate
-      className="flex flex-col gap-3 rounded-lg bg-white p-4 shadow"
+      className={`${CARD_CLASSES} flex flex-col gap-4 p-5`}
     >
-      <TextField label="Nome" error={errors.name?.message} {...register('name')} />
-      <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
-        Duração
-        <select
-          className="rounded-md border border-slate-300 px-3 py-2 font-normal"
-          {...register('durationMinutes', { valueAsNumber: true })}
-        >
-          {DURATION_OPTIONS.map((minutes) => (
-            <option key={minutes} value={minutes}>
-              {formatDuration(minutes)}
-            </option>
-          ))}
-        </select>
-      </label>
-      <TextField
-        label="Preço (R$)"
-        type="number"
-        step="0.01"
-        min="0"
-        error={errors.price?.message}
-        {...register('price', { valueAsNumber: true })}
-      />
+      <div className="grid gap-4 sm:grid-cols-[2fr_1fr_1fr]">
+        <TextField label="Nome" error={errors.name?.message} {...register('name')} />
+        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink">
+          Duração
+          <select
+            className={`${INPUT_CLASSES} font-normal`}
+            {...register('durationMinutes', { valueAsNumber: true })}
+          >
+            {DURATION_OPTIONS.map((minutes) => (
+              <option key={minutes} value={minutes}>
+                {formatDuration(minutes)}
+              </option>
+            ))}
+          </select>
+        </label>
+        <TextField
+          label="Preço (R$)"
+          type="number"
+          step="0.01"
+          min="0"
+          error={errors.price?.message}
+          {...register('price', { valueAsNumber: true })}
+        />
+      </div>
       {error && (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="text-sm text-ruby-700">
           {error.message}
         </p>
       )}
@@ -107,9 +110,9 @@ export function ServiceForm({
           {submitLabel}
         </Button>
         {onCancel && (
-          <button type="button" className="px-2 text-slate-700 underline" onClick={onCancel}>
+          <Button type="button" variant="ghost" onClick={onCancel}>
             Cancelar
-          </button>
+          </Button>
         )}
       </div>
     </form>

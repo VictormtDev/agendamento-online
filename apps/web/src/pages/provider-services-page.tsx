@@ -1,7 +1,9 @@
+import { Clock, Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useProviderProfile, type ServiceSummary } from '../api/providers';
 import { useCreateService, useDeleteService, useUpdateService } from '../api/services';
 import { Button } from '../components/ui/button';
+import { CARD_CLASSES } from '../components/ui/card';
 import { ErrorMessage, LoadingMessage } from '../components/ui/query-state';
 import { useSignedInUser } from '../features/auth/auth-context';
 import { ServiceForm } from '../features/services/service-form';
@@ -15,10 +17,10 @@ export function ProviderServicesPage() {
   const [createdCount, setCreatedCount] = useState(0);
 
   return (
-    <section className="flex flex-col gap-4">
-      <h1 className="text-2xl font-semibold text-slate-900">Serviços</h1>
+    <section className="flex flex-col gap-6">
+      <h1 className="text-3xl font-bold text-ink">Serviços</h1>
 
-      <h2 className="text-lg font-medium text-slate-900">Novo serviço</h2>
+      <h2 className="text-xl font-semibold text-ink">Novo serviço</h2>
       <ServiceForm
         key={createdCount}
         submitLabel={createService.isPending ? 'Salvando...' : 'Adicionar serviço'}
@@ -33,16 +35,16 @@ export function ProviderServicesPage() {
         }}
       />
 
-      <h2 className="text-lg font-medium text-slate-900">Seus serviços</h2>
+      <h2 className="text-xl font-semibold text-ink">Seus serviços</h2>
       {profile.isPending && <LoadingMessage />}
       {profile.isError && <ErrorMessage error={profile.error} />}
       {profile.isSuccess &&
         (profile.data.services.length === 0 ? (
-          <p className="text-slate-600">
+          <p className="rounded-2xl border border-dashed border-line p-6 text-center text-muted">
             Nenhum serviço ainda. Sem serviços, você não aparece na lista de profissionais.
           </p>
         ) : (
-          <ul className="flex flex-col gap-2">
+          <ul className="flex flex-col gap-3">
             {profile.data.services.map((service) => (
               <ServiceRow key={service.id} service={service} />
             ))}
@@ -85,50 +87,55 @@ function ServiceRow({ service }: { service: ServiceSummary }) {
   }
 
   return (
-    <li aria-label={service.name} className="flex flex-col gap-2 rounded-lg bg-white p-4 shadow">
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <span className="block font-medium text-slate-900">{service.name}</span>
-          <span className="text-sm text-slate-600">
+    <li aria-label={service.name} className={`${CARD_CLASSES} flex flex-col gap-3 p-4 sm:p-5`}>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-col gap-1">
+          <span className="font-display text-lg font-semibold text-ink">{service.name}</span>
+          <span className="flex items-center gap-1.5 text-sm text-muted tabular-nums">
+            <Clock aria-hidden="true" className="size-3.5" />
             {formatDuration(service.durationMinutes)} · {formatPrice(service.priceCents)}
           </span>
         </div>
         {mode === 'view' && (
-          <div className="flex gap-2">
-            <button
-              type="button"
-              className="text-sm text-slate-700 underline"
+          <div className="flex gap-1">
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => {
                 setMode('edit');
               }}
             >
+              <Pencil aria-hidden="true" className="size-4" />
               Editar
-            </button>
-            <button
-              type="button"
-              className="text-sm text-red-700 underline"
+            </Button>
+            <Button
+              variant="danger-ghost"
+              size="sm"
               onClick={() => {
                 deleteService.reset();
                 setMode('confirm-delete');
               }}
             >
+              <Trash2 aria-hidden="true" className="size-4" />
               Remover
-            </button>
+            </Button>
           </div>
         )}
       </div>
       {deleteService.error && (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="text-sm text-ruby-700">
           {deleteService.error.message}
         </p>
       )}
       {mode === 'confirm-delete' && (
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 rounded-xl bg-ruby-50 p-2 pl-3">
           {/* Soft delete in the API: booked appointments keep their service. */}
-          <span className="text-sm text-slate-700">
+          <span className="text-sm font-medium text-ruby-700">
             Remover este serviço? Agendamentos já feitos continuam valendo.
           </span>
           <Button
+            variant="danger"
+            size="sm"
             disabled={deleteService.isPending}
             onClick={() => {
               deleteService.mutate(service.id, {
@@ -140,15 +147,15 @@ function ServiceRow({ service }: { service: ServiceSummary }) {
           >
             Sim, remover
           </Button>
-          <button
-            type="button"
-            className="px-2 text-sm text-slate-700 underline"
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => {
               setMode('view');
             }}
           >
             Manter
-          </button>
+          </Button>
         </div>
       )}
     </li>

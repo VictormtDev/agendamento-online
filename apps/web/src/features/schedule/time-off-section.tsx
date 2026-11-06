@@ -1,6 +1,8 @@
+import { CalendarOff, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useCreateTimeOff, useDeleteTimeOff, useTimeOffs, type TimeOff } from '../../api/schedule';
 import { Button } from '../../components/ui/button';
+import { CARD_CLASSES } from '../../components/ui/card';
 import { FormError } from '../../components/ui/form-error';
 import { ErrorMessage, LoadingMessage } from '../../components/ui/query-state';
 import { TextField } from '../../components/ui/text-field';
@@ -17,7 +19,9 @@ export function TimeOffSection({ timezone }: { timezone: string }) {
       {timeOffs.isError && <ErrorMessage error={timeOffs.error} />}
       {timeOffs.isSuccess &&
         (timeOffs.data.length === 0 ? (
-          <p className="text-sm text-slate-500">Nenhuma folga marcada.</p>
+          <p className="rounded-2xl border border-dashed border-line p-6 text-center text-sm text-muted">
+            Nenhuma folga marcada.
+          </p>
         ) : (
           <ul className="flex flex-col gap-2">
             {timeOffs.data.map((timeOff) => (
@@ -66,7 +70,7 @@ function TimeOffForm({ timezone }: { timezone: string }) {
         event.preventDefault();
         submit();
       }}
-      className="flex flex-col gap-3 rounded-lg bg-white p-4 shadow"
+      className={`${CARD_CLASSES} flex flex-col gap-4 p-5`}
     >
       <div className="grid gap-3 sm:grid-cols-2">
         <TextField
@@ -95,7 +99,7 @@ function TimeOffForm({ timezone }: { timezone: string }) {
         }}
       />
       {missingDates && (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="text-sm text-ruby-700">
           Informe o início e o fim da folga.
         </p>
       )}
@@ -111,25 +115,29 @@ function TimeOffRow({ timeOff, timezone }: { timeOff: TimeOff; timezone: string 
   const deleteTimeOff = useDeleteTimeOff();
 
   return (
-    <li className="flex flex-col gap-1 rounded-lg bg-white p-3 shadow">
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <span className="block text-slate-900">
-            {formatDateTime(timeOff.startsAt, timezone)} até{' '}
-            {formatDateTime(timeOff.endsAt, timezone)}
-          </span>
-          {timeOff.reason && <span className="text-sm text-slate-600">{timeOff.reason}</span>}
+    <li className={`${CARD_CLASSES} flex flex-col gap-2 p-4`}>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-start gap-3">
+          <CalendarOff aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-saffron-600" />
+          <div className="flex flex-col gap-0.5">
+            <span className="text-ink">
+              {formatDateTime(timeOff.startsAt, timezone)} até{' '}
+              {formatDateTime(timeOff.endsAt, timezone)}
+            </span>
+            {timeOff.reason && <span className="text-sm text-muted">{timeOff.reason}</span>}
+          </div>
         </div>
-        <button
-          type="button"
-          className="text-sm text-red-700 underline disabled:opacity-50"
+        <Button
+          variant="danger-ghost"
+          size="sm"
           disabled={deleteTimeOff.isPending}
           onClick={() => {
             deleteTimeOff.mutate(timeOff.id);
           }}
         >
+          <Trash2 aria-hidden="true" className="size-4" />
           Remover folga
-        </button>
+        </Button>
       </div>
       <FormError error={deleteTimeOff.error} />
     </li>
