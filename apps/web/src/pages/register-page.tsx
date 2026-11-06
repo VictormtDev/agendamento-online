@@ -6,9 +6,12 @@ export function RegisterPage() {
   return (
     <AuthLayout title="Criar conta">
       <RegisterForm />
-      <p className="mt-4 text-center text-sm text-slate-600">
+      <p className="mt-6 text-center text-sm text-muted">
         Já tem conta?{' '}
-        <Link to="/login" className="font-medium text-slate-900 underline">
+        <Link
+          to="/login"
+          className="font-medium text-eucalyptus-700 underline-offset-4 hover:underline"
+        >
           Entrar
         </Link>
       </p>
