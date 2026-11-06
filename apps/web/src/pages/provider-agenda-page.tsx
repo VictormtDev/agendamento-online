@@ -143,7 +143,7 @@ function AgendaDay({ label, appointments, timezone, now }: AgendaDayProps) {
             >
               <span
                 aria-hidden="true"
-                className="absolute top-5 -left-[1.95rem] size-3 rounded-full border-2 border-white bg-eucalyptus-700"
+                className="absolute top-5 -left-[calc(1.625rem+1px)] size-3 rounded-full border-2 border-white bg-eucalyptus-700"
               />
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="font-display font-semibold text-ink tabular-nums">

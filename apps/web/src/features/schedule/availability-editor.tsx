@@ -4,7 +4,7 @@ import { useReplaceAvailability, type AvailabilityWindow } from '../../api/sched
 import { Button } from '../../components/ui/button';
 import { CARD_CLASSES } from '../../components/ui/card';
 import { FormError } from '../../components/ui/form-error';
-import { INPUT_CLASSES } from '../../components/ui/text-field';
+import { COMPACT_INPUT_CLASSES } from '../../components/ui/text-field';
 
 // Monday first, as Brazilian calendars do; the API numbers days from Sunday (0).
 const WEEKDAYS = [
@@ -85,7 +85,7 @@ export function AvailabilityEditor({ initial }: { initial: AvailabilityWindow[] 
                   onChange={(event) => {
                     change(window.key, { startTime: event.target.value });
                   }}
-                  className={`${INPUT_CLASSES} py-1.5 tabular-nums`}
+                  className={`${COMPACT_INPUT_CLASSES} tabular-nums`}
                 />
                 <span className="text-sm text-muted">até</span>
                 <input
@@ -96,7 +96,7 @@ export function AvailabilityEditor({ initial }: { initial: AvailabilityWindow[] 
                   onChange={(event) => {
                     change(window.key, { endTime: event.target.value });
                   }}
-                  className={`${INPUT_CLASSES} py-1.5 tabular-nums`}
+                  className={`${COMPACT_INPUT_CLASSES} tabular-nums`}
                 />
                 <Button
                   variant="danger-ghost"
