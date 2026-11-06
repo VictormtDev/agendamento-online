@@ -225,8 +225,9 @@ npm run test:unit -w apps/api        # só unitários (sem banco)
 npm run test:integration -w apps/api # só integração (usa o Postgres de teste)
 npm run test -w apps/web             # só frontend
 npm run lint && npm run typecheck
-npx prisma migrate dev -w apps/api   # nova migration
-npx prisma studio -w apps/api
+npx -w apps/api prisma migrate dev   # nova migration
+npx -w apps/api prisma studio
+npx -w apps/api prisma db seed       # recria os dados de demonstração (senha demo12345)
 ```
 
 (Ajustar esta seção se os scripts mudarem.)
@@ -275,9 +276,9 @@ Seguir em ordem. Marcar `[x]` ao concluir cada item.
 
 **Fase 5 — Acabamento de portfólio**
 
-- [ ] Swagger completo em `/docs`
-- [ ] Seed com dados de demonstração e usuários de teste
-- [ ] Deploy (API + banco + front) com link público
+- [x] Swagger completo em `/docs`
+- [x] Seed com dados de demonstração e usuários de teste
+- [x] Deploy (API + banco + front) com link público
 - [ ] README com: problema, prints/GIF, arquitetura, decisões técnicas, como rodar, próximos passos
 
 **Extras (se sobrar fôlego)**

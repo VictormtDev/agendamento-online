@@ -1,4 +1,6 @@
+import path from 'node:path';
 import express, { type Express } from 'express';
+import swaggerUi from 'swagger-ui-express';
 import { z } from 'zod';
 import type { TokenService } from '../../application/ports/token-service.js';
 import type { AuthenticateUser } from '../../application/use-cases/authenticate-user.js';
@@ -25,6 +27,7 @@ import { createEnsureAuthenticated } from './middlewares/ensure-authenticated.js
 import { createEnsureRole } from './middlewares/ensure-role.js';
 import { errorHandler } from './middlewares/error-handler.js';
 import { notFound } from './middlewares/not-found.js';
+import { createOpenApiDocument } from './openapi/openapi-document.js';
 import { createAppointmentRouter } from './routes/appointment-routes.js';
 import { createAuthRouter } from './routes/auth-routes.js';
 import { createAvailabilityRouter } from './routes/availability-routes.js';
@@ -61,9 +64,14 @@ export interface AppDependencies {
   listProviderAppointments: ListProviderAppointments;
 }
 
+export interface AppOptions {
+  /** Built frontend served from the same origin, so production needs no CORS. */
+  webDistDir?: string | undefined;
+}
+
 // Building the app separately from listening lets tests drive it with Supertest
 // and swap dependencies without opening a port.
-export function createApp(dependencies: AppDependencies): Express {
+export function createApp(dependencies: AppDependencies, options: AppOptions = {}): Express {
   const app = express();
   app.disable('x-powered-by');
   app.use(express.json());
@@ -82,8 +90,32 @@ export function createApp(dependencies: AppDependencies): Express {
   app.use('/api/v1', createProviderRouter(dependencies));
   app.use('/api/v1', createAppointmentRouter(dependencies, ensureAuthenticated, providerOnly));
 
+  // Outside /api/v1: the docs describe the API rather than being part of it.
+  const openApiDocument = createOpenApiDocument();
+  app.get('/docs/openapi.json', (_request, response) => {
+    response.json(openApiDocument);
+  });
+  app.use('/docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
+
+  if (options.webDistDir) {
+    serveWeb(app, path.resolve(options.webDistDir));
+  }
+
   app.use(notFound);
   app.use(errorHandler);
 
   return app;
+}
+
+function serveWeb(app: Express, webDistDir: string): void {
+  app.use(express.static(webDistDir));
+  // Client-side routes such as /providers/:id have no file of their own: the SPA
+  // resolves them. Unknown API URLs still fall through to the JSON 404.
+  app.use((request, response, next) => {
+    if (request.method !== 'GET' || request.path.startsWith('/api/')) {
+      next();
+      return;
+    }
+    response.sendFile(path.join(webDistDir, 'index.html'));
+  });
 }

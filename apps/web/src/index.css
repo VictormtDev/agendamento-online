@@ -1,1 +1,62 @@
 @import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Figtree', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Bricolage Grotesque', 'Figtree', ui-sans-serif, sans-serif;
+
+  --color-linen: #f6f7f4;
+  --color-ink: #1c2321;
+  --color-line: #dde6e2;
+  --color-muted: #5b6b66;
+
+  --color-eucalyptus-50: #eaf2ef;
+  --color-eucalyptus-100: #d5e7e2;
+  --color-eucalyptus-200: #adcfc6;
+  --color-eucalyptus-300: #7fb2a6;
+  --color-eucalyptus-400: #4f9081;
+  --color-eucalyptus-500: #347567;
+  --color-eucalyptus-600: #286a5e;
+  --color-eucalyptus-700: #1f5c55;
+  --color-eucalyptus-800: #194a45;
+  --color-eucalyptus-900: #133835;
+
+  --color-saffron-50: #fdf7e8;
+  --color-saffron-100: #faebc5;
+  --color-saffron-200: #f4d68b;
+  --color-saffron-400: #e3a72f;
+  --color-saffron-600: #a26c15;
+  --color-saffron-700: #7c5212;
+
+  --color-ruby-50: #fceeef;
+  --color-ruby-100: #f7d5d7;
+  --color-ruby-600: #b4363f;
+  --color-ruby-700: #922a32;
+
+  --shadow-lift: 0 12px 32px -12px rgb(19 56 53 / 0.25);
+}
+
+@layer base {
+  body {
+    @apply bg-linen font-sans text-ink antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display tracking-tight;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-eucalyptus-600;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

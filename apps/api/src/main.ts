@@ -3,7 +3,7 @@ import { createAppDependencies } from './infra/container.js';
 import { prisma } from './infra/database/prisma-client.js';
 import { createApp } from './infra/http/app.js';
 
-const app = createApp(createAppDependencies(prisma, env));
+const app = createApp(createAppDependencies(prisma, env), { webDistDir: env.WEB_DIST_DIR });
 
 const server = app.listen(env.PORT, () => {
   console.log(`API listening on http://localhost:${String(env.PORT)}`);
