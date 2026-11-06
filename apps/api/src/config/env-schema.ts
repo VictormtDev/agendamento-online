@@ -10,6 +10,8 @@ const envSchema = z.object({
     .string()
     .regex(/^\d+[smhd]$/, 'Use a duration like 15m, 1h or 7d')
     .default('1h'),
+  // Production only: in development the Vite dev server serves the frontend.
+  WEB_DIST_DIR: z.string().min(1).optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;

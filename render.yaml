@@ -1,0 +1,22 @@
+# Render Blueprint: one web service runs the API and serves the built frontend.
+# The database lives on Neon; DATABASE_URL is filled in on the Render dashboard.
+services:
+  - type: web
+    name: agendamento-online
+    runtime: node
+    plan: free
+    region: virginia
+    # Dev dependencies are needed to build (Vite, Prisma CLI, tsx), but NODE_ENV=production
+    # would make npm skip them. Migrations run here because the free plan has no pre-deploy step.
+    buildCommand: npm ci --include=dev && npm run build -w apps/web && npx prisma migrate deploy -w apps/api
+    startCommand: npm run start -w apps/api
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: WEB_DIST_DIR
+        value: ../web/dist
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false

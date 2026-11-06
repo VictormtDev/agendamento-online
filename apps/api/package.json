@@ -5,6 +5,7 @@
   "scripts": {
     "postinstall": "prisma generate",
     "dev": "tsx watch --env-file-if-exists=.env src/main.ts",
+    "start": "tsx src/main.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:unit": "vitest run --project unit",

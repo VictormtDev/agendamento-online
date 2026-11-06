@@ -1,3 +1,4 @@
+import path from 'node:path';
 import express, { type Express } from 'express';
 import swaggerUi from 'swagger-ui-express';
 import { z } from 'zod';
@@ -63,9 +64,14 @@ export interface AppDependencies {
   listProviderAppointments: ListProviderAppointments;
 }
 
+export interface AppOptions {
+  /** Built frontend served from the same origin, so production needs no CORS. */
+  webDistDir?: string | undefined;
+}
+
 // Building the app separately from listening lets tests drive it with Supertest
 // and swap dependencies without opening a port.
-export function createApp(dependencies: AppDependencies): Express {
+export function createApp(dependencies: AppDependencies, options: AppOptions = {}): Express {
   const app = express();
   app.disable('x-powered-by');
   app.use(express.json());
@@ -91,8 +97,25 @@ export function createApp(dependencies: AppDependencies): Express {
   });
   app.use('/docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
 
+  if (options.webDistDir) {
+    serveWeb(app, path.resolve(options.webDistDir));
+  }
+
   app.use(notFound);
   app.use(errorHandler);
 
   return app;
+}
+
+function serveWeb(app: Express, webDistDir: string): void {
+  app.use(express.static(webDistDir));
+  // Client-side routes such as /providers/:id have no file of their own: the SPA
+  // resolves them. Unknown API URLs still fall through to the JSON 404.
+  app.use((request, response, next) => {
+    if (request.method !== 'GET' || request.path.startsWith('/api/')) {
+      next();
+      return;
+    }
+    response.sendFile(path.join(webDistDir, 'index.html'));
+  });
 }
