@@ -1,8 +1,9 @@
-import { fireEvent, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { User } from '../api/auth';
-import { todayIn } from '../lib/format';
+import { shiftDate, startOfCalendarDate } from '../lib/agenda-range';
+import { formatDateTime, formatDayLabel, todayIn } from '../lib/format';
 import { apiError, mockFetch } from '../test/mock-fetch';
 import { renderApp } from '../test/render-app';
 
@@ -10,7 +11,12 @@ const TIMEZONE = 'America/Sao_Paulo';
 const PROVIDER_ID = 'b6f0c1a2-0000-4000-8000-0000000000aa';
 const SERVICE_ID = 'b6f0c1a2-0000-4000-8000-0000000000bb';
 const TODAY = todayIn(TIMEZONE);
-const OTHER_DAY = '2099-01-15';
+// Tomorrow is always in the first week the strip shows.
+const OTHER_DAY = shiftDate('day', TODAY, TIMEZONE, 1);
+
+// The strip's day buttons are named in full, e.g. "quinta-feira, 15 de janeiro".
+const dayButtonName = (date: string) =>
+  formatDayLabel(startOfCalendarDate(date, TIMEZONE), TIMEZONE);
 
 const user: User = {
   id: 'b6f0c1a2-0000-4000-8000-000000000001',
@@ -77,12 +83,13 @@ describe('booking flow', () => {
     await userEvent.click(await screen.findByRole('link', { name: 'Agendar Massagem' }));
     expect(await screen.findByText('Nenhum horário disponível nesta data.')).toBeInTheDocument();
 
-    // Native date pickers cannot be typed into in jsdom; change is what the browser fires.
-    fireEvent.change(screen.getByLabelText('Data'), { target: { value: OTHER_DAY } });
+    await userEvent.click(screen.getByRole('button', { name: dayButtonName(OTHER_DAY) }));
     await userEvent.click(await screen.findByRole('button', { name: '10:00' }));
 
     expect(screen.getByRole('heading', { name: 'Confirme o agendamento' })).toBeInTheDocument();
-    expect(screen.getByText('quinta-feira, 15 de janeiro de 2099 às 10:00')).toBeInTheDocument();
+    expect(
+      screen.getByText(formatDateTime(`${OTHER_DAY}T13:00:00.000Z`, TIMEZONE)),
+    ).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: 'Confirmar agendamento' }));
 
@@ -114,7 +121,7 @@ describe('booking flow', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'Esse horário acabou de ser reservado. Escolha outro.',
     );
-    expect(screen.getByLabelText('Data')).toBeInTheDocument();
+    expect(screen.getByRole('group', { name: 'Data' })).toBeInTheDocument();
     const slotRequests = fetchMock.mock.calls.filter(([url]) => url.includes('/slots'));
     expect(slotRequests.length).toBeGreaterThan(1);
   });
@@ -154,7 +161,24 @@ describe('booking flow', () => {
     mockFetch({ ...baseRoutes, [slotsUrl(TODAY)]: slotsAt(TODAY, []) });
     renderApp(`/providers/${PROVIDER_ID}/services/${SERVICE_ID}/book`);
 
-    expect(await screen.findByLabelText('Data')).toHaveAttribute('min', TODAY);
+    expect(await screen.findByRole('button', { name: 'Dias anteriores' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: dayButtonName(TODAY) })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+  });
+
+  it('should move the strip to the next week and back', async () => {
+    const nextWeek = shiftDate('week', TODAY, TIMEZONE, 1);
+    mockFetch({ ...baseRoutes, [slotsUrl(TODAY)]: slotsAt(TODAY, []) });
+    renderApp(`/providers/${PROVIDER_ID}/services/${SERVICE_ID}/book`);
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Próximos dias' }));
+
+    expect(screen.getByRole('button', { name: dayButtonName(nextWeek) })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: dayButtonName(TODAY) })).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Dias anteriores' }));
+    expect(screen.getByRole('button', { name: dayButtonName(TODAY) })).toBeInTheDocument();
   });
 
   it('should tell when the service no longer exists', async () => {
