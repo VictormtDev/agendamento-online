@@ -278,7 +278,7 @@ Seguir em ordem. Marcar `[x]` ao concluir cada item.
 
 - [x] Swagger completo em `/docs`
 - [x] Seed com dados de demonstração e usuários de teste
-- [ ] Deploy (API + banco + front) com link público
+- [x] Deploy (API + banco + front) com link público
 - [ ] README com: problema, prints/GIF, arquitetura, decisões técnicas, como rodar, próximos passos
 
 **Extras (se sobrar fôlego)**
