@@ -225,9 +225,9 @@ npm run test:unit -w apps/api        # só unitários (sem banco)
 npm run test:integration -w apps/api # só integração (usa o Postgres de teste)
 npm run test -w apps/web             # só frontend
 npm run lint && npm run typecheck
-npx prisma migrate dev -w apps/api   # nova migration
-npx prisma studio -w apps/api
-npx prisma db seed -w apps/api       # recria os dados de demonstração (senha demo12345)
+npx -w apps/api prisma migrate dev   # nova migration
+npx -w apps/api prisma studio
+npx -w apps/api prisma db seed       # recria os dados de demonstração (senha demo12345)
 ```
 
 (Ajustar esta seção se os scripts mudarem.)

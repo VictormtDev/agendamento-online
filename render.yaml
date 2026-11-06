@@ -8,7 +8,7 @@ services:
     region: virginia
     # Dev dependencies are needed to build (Vite, Prisma CLI, tsx), but NODE_ENV=production
     # would make npm skip them. Migrations run here because the free plan has no pre-deploy step.
-    buildCommand: npm ci --include=dev && npm run build -w apps/web && npx prisma migrate deploy -w apps/api
+    buildCommand: npm ci --include=dev && npm run build -w apps/web && npx -w apps/api prisma migrate deploy
     startCommand: npm run start -w apps/api
     healthCheckPath: /api/v1/health
     envVars:
