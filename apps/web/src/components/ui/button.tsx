@@ -1,6 +1,6 @@
 import type { ComponentProps } from 'react';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'danger-ghost';
 export type ButtonSize = 'sm' | 'md';
 
 const BASE =
@@ -11,6 +11,7 @@ const VARIANTS: Record<ButtonVariant, string> = {
   secondary: 'border border-eucalyptus-200 bg-white text-eucalyptus-800 hover:bg-eucalyptus-50',
   ghost: 'text-eucalyptus-800 hover:bg-eucalyptus-50',
   danger: 'bg-ruby-600 text-white hover:bg-ruby-700',
+  'danger-ghost': 'text-ruby-700 hover:bg-ruby-50',
 };
 
 const SIZES: Record<ButtonSize, string> = {
