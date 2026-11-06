@@ -1,3 +1,4 @@
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useSearchParams } from 'react-router';
 import { Button } from './button';
 
@@ -24,23 +25,29 @@ export function Pagination({ page, totalPages, onPageChange }: PaginationProps) 
   return (
     <nav aria-label="Paginação" className="flex items-center justify-center gap-4">
       <Button
+        variant="secondary"
+        size="sm"
         disabled={page <= 1}
         onClick={() => {
           onPageChange(page - 1);
         }}
       >
+        <ChevronLeft aria-hidden="true" className="size-4" />
         Anterior
       </Button>
-      <span className="text-sm text-slate-600">
+      <span className="text-sm text-muted tabular-nums">
         Página {page} de {totalPages}
       </span>
       <Button
+        variant="secondary"
+        size="sm"
         disabled={page >= totalPages}
         onClick={() => {
           onPageChange(page + 1);
         }}
       >
         Próxima
+        <ChevronRight aria-hidden="true" className="size-4" />
       </Button>
     </nav>
   );
